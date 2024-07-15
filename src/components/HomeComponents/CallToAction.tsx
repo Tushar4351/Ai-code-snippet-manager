@@ -1,8 +1,8 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import helixImage from "../assets/images/helix2.png";
-import emojiStarImage from "../assets/images/emojistar.png";
+import helixImage from "../../assets/images/helix2.png";
+import emojiStarImage from "../../assets/images/emojistar.png";
 import Image from "next/image";
 import { useRef } from "react";
 

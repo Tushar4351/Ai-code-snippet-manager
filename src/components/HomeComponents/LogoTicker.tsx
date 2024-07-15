@@ -2,11 +2,11 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import React from "react";
-import acmeLogo from "../assets/images/acme.png";
-import quantumLogo from "../assets/images/quantum.png";
-import echoLogo from "../assets/images/echo.png";
-import celestialLogo from "../assets/images/celestial.png";
-import apexLogo from "../assets/images/apex.png";
+import acmeLogo from "../../assets/images/acme.png";
+import quantumLogo from "../../assets/images/quantum.png";
+import echoLogo from "../../assets/images/echo.png";
+import celestialLogo from "../../assets/images/celestial.png";
+import apexLogo from "../../assets/images/apex.png";
 
 const images = [
   { src: acmeLogo, alt: "Acme Logo" },

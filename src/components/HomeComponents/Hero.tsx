@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
-import cursorImage from "../assets/images/cursor.png";
-import messageImage from "../assets/images/message.png";
+import cursorImage from "../../assets/images/cursor.png";
+import messageImage from "../../assets/images/message.png";
 import { motion } from "framer-motion";
 const Hero = () => {
   return (

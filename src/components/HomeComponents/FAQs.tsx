@@ -5,8 +5,8 @@ import {
   motion,
 } from "framer-motion";
 import React from "react";
-import PlusIcon from "../assets/icons/plus.svg";
-import MinusIcon from "../assets/icons/minus.svg";
+import PlusIcon from "../../assets/icons/plus.svg";
+import MinusIcon from "../../assets/icons/minus.svg";
 import clsx from "clsx";
 const items = [
   {

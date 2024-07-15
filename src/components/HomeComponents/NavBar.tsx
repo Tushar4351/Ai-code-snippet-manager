@@ -1,5 +1,5 @@
-import logoImage from "../assets/images/logosaas.png";
-import MenuIcon from "../assets/icons/menu.svg";
+import logoImage from "../../assets/images/logosaas.png";
+import MenuIcon from "../../assets/icons/menu.svg";
 import Image from "next/image";
 
 const NavBar = () => {
@@ -18,7 +18,7 @@ const NavBar = () => {
 
           <div className="border border-white border-opacity-30 h-10 w-10 inline-flex justify-center items-center rounded-lg sm:hidden">
             <MenuIcon className="text-white" />
-          </div>
+          </div>../
           <nav className="hidden sm:flex gap-6 items-center">
             <a
               href="#home"

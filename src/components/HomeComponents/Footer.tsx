@@ -1,7 +1,7 @@
-import InstaIcon from "../assets/icons/insta.svg";
-import XSocial from "../assets/icons/x-social.svg";
-import TiktokIcon from "../assets/icons/tiktok.svg";
-import YoutubeIcon from "../assets/icons/youtube.svg";
+import InstaIcon from "../../assets/icons/insta.svg";
+import XSocial from "../../assets/icons/x-social.svg";
+import TiktokIcon from "../../assets/icons/tiktok.svg";
+import YoutubeIcon from "../../assets/icons/youtube.svg";
 
 const Footer = () => {
   return (
