@@ -5,7 +5,7 @@ const page = () => {
   return (
     <div>
       <NavBar />
-      dashboard page
+      dashboard page come back
     </div>
   );
 };
