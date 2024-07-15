@@ -1,14 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import dbConnect from "../lib/connectDB";
-import { handleError } from "../lib/utils";
+import { connectToDatabase } from "../lib/connectDB";
 import User from "../Models/UserSchema";
+import { handleError } from "../lib/utils";
 
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
-    await dbConnect();
+    await connectToDatabase();
 
     const newUser = await User.create(user);
 
@@ -21,7 +21,7 @@ export async function createUser(user: CreateUserParams) {
 // READ
 export async function getUserById(userId: string) {
   try {
-    await dbConnect();
+    await connectToDatabase();
 
     const user = await User.findOne({ clerkId: userId });
 
@@ -36,14 +36,14 @@ export async function getUserById(userId: string) {
 // UPDATE
 export async function updateUser(clerkId: string, user: UpdateUserParams) {
   try {
-    await dbConnect();
+    await connectToDatabase();
 
     const updatedUser = await User.findOneAndUpdate({ clerkId }, user, {
       new: true,
     });
 
     if (!updatedUser) throw new Error("User update failed");
-    
+
     return JSON.parse(JSON.stringify(updatedUser));
   } catch (error) {
     handleError(error);
@@ -53,7 +53,7 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
 // DELETE
 export async function deleteUser(clerkId: string) {
   try {
-    await dbConnect();
+    await connectToDatabase();
 
     // Find user to delete
     const userToDelete = await User.findOne({ clerkId });
@@ -75,15 +75,15 @@ export async function deleteUser(clerkId: string) {
 // USE CREDITS
 export async function updateCredits(userId: string, creditFee: number) {
   try {
-    await dbConnect();
+    await connectToDatabase();
 
     const updatedUserCredits = await User.findOneAndUpdate(
       { _id: userId },
-      { $inc: { creditBalance: creditFee }},
+      { $inc: { creditBalance: creditFee } },
       { new: true }
-    )
+    );
 
-    if(!updatedUserCredits) throw new Error("User credits update failed");
+    if (!updatedUserCredits) throw new Error("User credits update failed");
 
     return JSON.parse(JSON.stringify(updatedUserCredits));
   } catch (error) {
