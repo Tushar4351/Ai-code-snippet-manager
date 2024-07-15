@@ -1,10 +1,12 @@
 import logoImage from "../../assets/images/logosaas.png";
 import MenuIcon from "../../assets/icons/menu.svg";
 import Image from "next/image";
+import Link from "next/link";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 const NavBar = () => {
   return (
-    <div className="bg-black"> 
+    <div className="bg-black">
       <div className="px-4 bg-black">
         <div className="py-4 flex items-center justify-between">
           <div className="relative">
@@ -15,40 +17,46 @@ const NavBar = () => {
               className="h-12 w-12 relative"
             />
           </div>
-
           <div className="border border-white border-opacity-30 h-10 w-10 inline-flex justify-center items-center rounded-lg sm:hidden">
             <MenuIcon className="text-white" />
-          </div>../
-          <nav className="hidden sm:flex gap-6 items-center">
-            <a
-              href="#home"
-              className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
-            >
-              Home
-            </a>
-            <a
-              href="#features"
-              className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
-            >
-              Features
-            </a>
-            <a
-              href="#pricing"
-              className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
-            >
-              Pricing
-            </a>
-            <a
-              href="#contact"
-              className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
-            >
-              Contact
-            </a>
+          </div>
+          <SignedOut>
+            <nav className="hidden sm:flex gap-6 items-center">
+              <a
+                href="#home"
+                className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
+              >
+                Home
+              </a>
+              <a
+                href="#features"
+                className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
+              >
+                Features
+              </a>
+              <a
+                href="#pricing"
+                className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
+              >
+                Pricing
+              </a>
+              <a
+                href="#contact"
+                className="text-opacity-60 text-white font-medium hover:text-opacity-100 transition"
+              >
+                Contact
+              </a>
 
-            <button className="bg-white font-medium py-2 px-4 rounded-lg hover:bg-blue-600">
-              Sign Up
-            </button>
-          </nav>
+              <Link href="/sign-up">
+                <button className="bg-white font-medium py-2 px-4 rounded-lg">
+                  Sign Up
+                </button>
+              </Link>
+            </nav>
+          </SignedOut>
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
         </div>
       </div>
     </div>
