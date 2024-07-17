@@ -3,6 +3,7 @@ import Image from "next/image";
 import cursorImage from "../../assets/images/cursor.png";
 import messageImage from "../../assets/images/message.png";
 import { motion } from "framer-motion";
+import Link from "next/link";
 const Hero = () => {
   return (
     <div className="bg-black text-white bg-[linear-gradient(to_bottom,#000,#200D42_34%,#4F21A1_65%,#A46EDB_82%)] py-[72px] sm:py-24 relative overflow-clip">
@@ -56,9 +57,11 @@ const Hero = () => {
         </div>
 
         <div className="flex justify-center mt-8">
-          <button className="bg-white text-black font-medium py-3 px-5 rounded-lg">
-            Get Started
-          </button>
+          <Link href="/sign-up">
+            <button className="bg-white text-black font-medium py-2 px-4 rounded-lg">
+              Get Started
+            </button>
+          </Link>
         </div>
       </div>
     </div>

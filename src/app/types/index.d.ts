@@ -16,3 +16,17 @@ declare type UpdateUserParams = {
   username: string;
   photo: string;
 };
+
+interface SideBarMenu {
+  id: number;
+  name: string;
+  isSelected: boolean;
+  icon: React.ReactNode;
+}
+interface DarkModeType {
+  id: number;
+  name: string;
+  isSelected: boolean;
+  icon: React.ReactNode;
+}
+

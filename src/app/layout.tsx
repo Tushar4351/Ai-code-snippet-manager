@@ -3,6 +3,7 @@ import { DM_Sans } from "next/font/google";
 import clsx from "clsx";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import GlobalContextProvider from "@/ContextApi";
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -19,9 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <ClerkProvider>
-        <body className={clsx(dmSans.className, "antialiased")}>
-          {children}
-        </body>
+        <GlobalContextProvider>
+          <body className={clsx(dmSans.className, "antialiased")}>
+            {children}
+          </body>
+        </GlobalContextProvider>
       </ClerkProvider>
     </html>
   );
