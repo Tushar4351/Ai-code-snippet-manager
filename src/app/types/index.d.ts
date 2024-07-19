@@ -29,12 +29,15 @@ interface DarkModeType {
   isSelected: boolean;
   icon: React.ReactNode;
 }
-
+interface SingleTagType {
+  id: string;
+  name: string;
+}
 interface SingleNoteType {
   id: string;
   title: string;
   isImportant: boolean;
-  tags: string[];
+  tags: SingleTagType[];
   description: string;
   code: string;
   language: string;

@@ -90,15 +90,15 @@ const NoteDate = ({createdAt}: { createdAt : string}) => {
       </div>
     )
 }
-const NoteTags = ({ tags }: { tags: string[] }) => {
+const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
   return (
     <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
-      {tags.map((tag, index) => (
+      {tags.map((tag) => (
         <span
-          key={index}
+          key={tag.id}
           className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]"
         >
-          {tag}
+          {tag.name}
         </span>
       ))}
     </div>

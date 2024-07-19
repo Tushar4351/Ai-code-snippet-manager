@@ -4,7 +4,7 @@ import { useContext, createContext, useState, useEffect } from "react";
 import snippetIcon from "./assets/icons/snippet.png";
 import importantIcon from "./assets/icons/important.png";
 import deleteIcon from "./assets/icons/delete.png";
-
+import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
 import cIcon from "./assets/icons/c.png";
@@ -30,21 +30,30 @@ interface GlobalContextType {
   isMobileObject: {
     isMobile: boolean;
     setIsMobile: React.Dispatch<React.SetStateAction<boolean>>;
-  }
+  };
   allNotesObject: {
     allNotes: SingleNoteType[];
     setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>;
-  },
+  };
   selectedNoteObject: {
     selectedNote: SingleNoteType | null;
-    setSelectedNote: React.Dispatch<React.SetStateAction<SingleNoteType | null>>;
-  }
+    setSelectedNote: React.Dispatch<
+      React.SetStateAction<SingleNoteType | null>
+    >;
+  };
   isNewNoteObject: {
     isNewNote: boolean;
     setIsNewNote: React.Dispatch<React.SetStateAction<boolean>>;
-  }
+  };
+  allTagsObject: {
+    allTags: SingleTagType[];
+    setAllTags: React.Dispatch<React.SetStateAction<SingleTagType[]>>;
+  };
+  selectedTagObject: {
+    selectedTags: SingleTagType[];
+    setSelectedTags: React.Dispatch<React.SetStateAction<SingleTagType[]>>;
+  };
 }
-
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
     sideBarMenu: [],
@@ -77,7 +86,15 @@ const ContextProvider = createContext<GlobalContextType>({
   isNewNoteObject: {
     isNewNote: false,
     setIsNewNote: () => {},
-    }
+  },
+  allTagsObject: {
+    allTags: [],
+    setAllTags: () => {},
+  },
+  selectedTagObject: {
+    selectedTags: [],
+    setSelectedTags: () => {},
+  },
 });
 
 export default function GlobalContextProvider({
@@ -120,66 +137,83 @@ export default function GlobalContextProvider({
   const [openSideBar, setOpenSideBar] = useState<boolean>(false);
   const [openContentNote, setOpenContentNote] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [allNotes, setAllNotes] = useState<SingleNoteType[]>([])
+  const [allNotes, setAllNotes] = useState<SingleNoteType[]>([]);
+  const [allTags, setAllTags] = useState<SingleTagType[]>([]);
   const [selectedNote, setSelectedNote] = useState<SingleNoteType | null>(null);
   const [isNewNote, setIsNewNote] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<SingleTagType[]>([]);
 
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
-  }
+  };
   useEffect(() => {
     handleResize();
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener('resize', handleResize);
-    }
-  },[])
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     function updateAllNotes() {
-      const allNotes= [
+      const allNotes = [
         {
-          id: '1',
-          title: 'Introduction to JavaScript',
+          id: uuidv4(),
+          title: "Introduction to JavaScript",
           isImportant: true,
-          tags: ['javascript', 'beginner', 'basics'],
-          description: 'A basic introduction to JavaScript programming language.',
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description:
+            "A basic introduction to JavaScript programming language.",
           code: `
-          import React from "react";
+import React from "react";
             
-          function HelloWorld() {
-          return <h1>Hello World</h1>;
-          }
+function HelloWorld() {
+return <h1>Hello World</h1>;
+}
             
-          export default HelloWorld;
+export default HelloWorld;
           `,
-          language: 'JavaScript',
-          createdAt: '2023-07-01T10:00:00Z'
+          language: "JavaScript",
+          createdAt: "2023-07-01T10:00:00Z",
         },
         {
-          id: '2',
-          title: 'JavaScript for Data Science',
+          id: uuidv4(),
+          title: "JavaScript for Data Science",
           isImportant: false,
-          tags: ['javascript', 'data science', 'react'],
-          description: 'Using JavaScript for data science with React.',
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description: "Using JavaScript for data science with React.",
           code: `
-            import React from "react";
+  import React from "react";
             
-            function HelloWorld() {
-              return <h1>Hello World</h1>;
-            }
+  function HelloWorld() {
+  return <h1>Hello World</h1>;
+  }
             
-            export default HelloWorld;
+  export default HelloWorld;
           `,
-          language: 'JavaScript',
-          createdAt: '2023-07-02T14:30:00Z'
+          language: "JavaScript",
+          createdAt: "2023-07-02T14:30:00Z",
         },
         {
-          id: '3',
-          title: 'JavaScript Flexbox Layout',
+          id: uuidv4(),
+          title: "JavaScript Flexbox Layout",
           isImportant: true,
-          tags: ['javascript', 'flexbox', 'layout'],
-          description: 'A guide to CSS Flexbox layout using JavaScript and React.',
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+
+          description:
+            "A guide to CSS Flexbox layout using JavaScript and React.",
           code: `
             import React from "react";
             
@@ -189,15 +223,19 @@ export default function GlobalContextProvider({
             
             export default HelloWorld;
           `,
-          language: 'JavaScript',
-          createdAt: '2023-07-03T09:00:00Z'
+          language: "JavaScript",
+          createdAt: "2023-07-03T09:00:00Z",
         },
         {
-          id: '4',
-          title: 'JavaScript Basics',
+          id: uuidv4(),
+          title: "JavaScript Basics",
           isImportant: false,
-          tags: ['javascript', 'react', 'queries'],
-          description: 'Basic JavaScript concepts for beginners using React.',
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description: "Basic JavaScript concepts for beginners using React.",
           code: `
             import React from "react";
             
@@ -207,22 +245,55 @@ export default function GlobalContextProvider({
             
             export default HelloWorld;
           `,
-          language: 'JavaScript',
-          createdAt: '2023-07-04T12:15:00Z'
-        }
+          language: "JavaScript",
+          createdAt: "2023-07-04T12:15:00Z",
+        },
       ];
+
       setTimeout(() => {
-        setAllNotes(allNotes)
-      },1200)
-      
+        setAllNotes(allNotes);
+      }, 1200);
     }
+    function updateAllTags() {
+      const allTags = [
+        {
+          id: uuidv4(),
+          name: "tag1",
+        },
+        {
+          id: uuidv4(),
+          name: "tag2",
+        },
+        {
+          id: uuidv4(),
+          name: "tag3",
+        },
+        {
+          id: uuidv4(),
+          name: "tag4",
+        },
+        {
+          id: uuidv4(),
+          name: "tag5",
+        },
+        {
+          id: uuidv4(),
+          name: "tag6",
+        },
+        {
+          id: uuidv4(),
+          name: "tag7",
+        },
+      ];
+      setAllTags(allTags);
+    }
+    updateAllTags();
     updateAllNotes();
-},[])
+  }, []);
 
-
-
-
-
+  useEffect(() => {
+    setSelectedTags(selectedNote?.tags || []);
+  }, [selectedNote]);
 
   return (
     <ContextProvider.Provider
@@ -234,8 +305,9 @@ export default function GlobalContextProvider({
         isMobileObject: { isMobile, setIsMobile },
         allNotesObject: { allNotes, setAllNotes },
         selectedNoteObject: { selectedNote, setSelectedNote },
-        isNewNoteObject :{isNewNote, setIsNewNote}
-
+        isNewNoteObject: { isNewNote, setIsNewNote },
+        allTagsObject: { allTags, setAllTags },
+        selectedTagObject: { selectedTags, setSelectedTags },
       }}
     >
       {children}
