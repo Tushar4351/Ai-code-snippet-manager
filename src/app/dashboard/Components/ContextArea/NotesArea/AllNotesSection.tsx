@@ -1,117 +1,140 @@
 import { useGlobalContext } from "@/ContextApi";
 import deleteIcon from "../../../../../assets/icons/delete.png";
 import importantIcon from "../../../../../assets/icons/important.png";
+import EditIcon from "../../../../../assets/icons/edit.svg"
 import JavaScriptIcon from "../../../../../assets/icons/javascript.png";
 import Image from "next/image";
 import React from "react";
-import SyntaxHighlighter from 'react-syntax-highlighter';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialLight, oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 const AllNotesSection = () => {
+  const {
+    allNotesObject: { allNotes },
+    openContentNoteObject: { openContentNote }
+  } = useGlobalContext();
   return (
-      <div className="mt-5 w-full flex flex-wrap gap-4">
-          <SingleNote />
-          <SingleNote />
-          <SingleNote />
-          <SingleNote/>
+    <div className={ `mt-5 gap-4 ${openContentNote ? "" : "flex flex-wrap"}`}>
+      {allNotes.map((note, index) => (
+        <div key={index}>
+          <SingleNote note={note} />
+        </div>
+      ))}
     </div>
-  )
-}
+  );
+};
 
 export default AllNotesSection
 
 
 
-const SingleNote = () => {
+const SingleNote = ({note}:{note: SingleNoteType}) => {
     const {
-        darkModeObject: { darkMode },
-      } = useGlobalContext();
+      darkModeObject: { darkMode },
+      openContentNoteObject: { openContentNote }
+  } = useGlobalContext();
+  
+  const { title, createdAt, tags, description, code, isImportant, language } = note;
+
   return (
-      <div className={`${darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"} max-sm:w-full w-[341px] rounded-lg py-4`}>
-          <NoteHeader />
-          <NoteDate />
-          <NoteTags />
-          <NoteDescription />
-          <CodeBlock language="javascript" />
-          <NotFooter/>
+    <div
+      className={`${
+        darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"} ${openContentNote ? "w-full" : "w-[366px]"} max-sm:w-full rounded-lg py-4`}
+    >
+      <NoteHeader title={title} isImportant={isImportant} note={note}/>
+      <NoteDate createdAt={createdAt} />
+      <NoteTags tags={tags} />
+      <NoteDescription description={description} />
+      <CodeBlock language={language} code={code} />
+      <NotFooter language={language}/>
     </div>
-  )
+  );
 }
 
 
-const NoteHeader = () => {
+const NoteHeader = ({ title, isImportant, note }: { title: string; isImportant: boolean; note: SingleNoteType }) => {
+  const { 
+    openContentNoteObject: { setOpenContentNote },
+    selectedNoteObject: { setSelectedNote }
+  } = useGlobalContext();
+
+  const handleEditClick = () => {
+    setSelectedNote(note);
+    setOpenContentNote(true);
+  };
+
   return (
-      <div className="flex justify-between mx-4">
-          <span className="font-bold text-lg w-[87%]">
-              Lorem ipsum dolor sit amet consectetur
-          </span>
-          <Image
-              src={importantIcon}
-              alt="DeleteLogo"
-              className="h-6 w-6 cursor-pointer"
-              width={20}
-              height={20}
-            />
-          
+    <div className="flex justify-between mx-4">
+      <span className="font-bold text-lg w-[87%]">{title}</span>
+      <div className="flex gap-2">
+        <EditIcon
+          className="w-7 h-7 cursor-pointer"
+          onClick={handleEditClick}
+        />
+        <Image
+          src={importantIcon}
+          alt="ImportantLogo"
+          className="h-6 w-6 cursor-pointer"
+          width={20}
+          height={20}
+        />
+      </div>
     </div>
-  )
+  );
 }
 
-const NoteDate = () => {
+const NoteDate = ({createdAt}: { createdAt : string}) => {
     return (
         <div className="text-gray-400 text-[11px] flex gap-1 font-light mx-4 mt-1">
-            <span>23th june 2024</span>
+        <span>{createdAt}</span>
       </div>
     )
 }
-const NoteTags = () => {
-    return (
-        <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
-      <span className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]">functions</span>
-      <span className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]">functions</span>
-      <span className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]">function</span>
-      <span className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]">functions</span>
+const NoteTags = ({ tags }: { tags: string[] }) => {
+  return (
+    <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
+      {tags.map((tag, index) => (
+        <span
+          key={index}
+          className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]"
+        >
+          {tag}
+        </span>
+      ))}
     </div>
-    )
-}
-const NoteDescription = () => {
+  );
+};
+const NoteDescription = ({description}: {description: string}) => {
     const {
         darkModeObject: { darkMode },
       } = useGlobalContext();
     return (
         <div className={`${darkMode[1].isSelected ? " text-white" : ""} text-gray-400 text-[13px] mt-4 mx-4`}>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Recusandae facilis nostrum vero voluptatum repellat voluptates est explicabo unde cupiditate aut sint, minima possimus quaerat harum dolor optio a eaque dolorum?
+           {description}
       </div>
     )
 }
 interface CodeBlockProps{
-      language: string;
+  language: string;
+  code: string;
   }
-const CodeBlock: React.FC<CodeBlockProps> = ({ language }) => {
+const CodeBlock: React.FC<CodeBlockProps> = ({ language,code}) => {
   const {
     darkModeObject: { darkMode },
   } = useGlobalContext();
-
-  const codeString = `
-    import React from "react";
-    
-    function HelloWorld(){
-    return <h1>Hello World</h1>
-    }
-    export default HelloWorld;
-    `;
+  
   return (
     <div className="rounded-md overflow-hidden text-sm">
       <SyntaxHighlighter
-        language={language}
+        language={language.toLowerCase()}
         style={darkMode[1].isSelected ? oneDark : materialLight}
       >
-        {codeString}
+        {code}
       </SyntaxHighlighter>
     </div>
   );
 };
-const NotFooter = () => {
+const NotFooter = ({language}: {language: string}) => {
     return (
       <div className="flex justify-between items-center text-[13px] text-gray-400 mx-4 mt-3">
         <div className="flex items-center">
@@ -122,7 +145,7 @@ const NotFooter = () => {
             width={20}
             height={20}
           />
-          <span>JavaScript</span>
+          <span>{ language}</span>
         </div>
         <Image
           src={deleteIcon}

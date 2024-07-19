@@ -5,6 +5,7 @@ import SearchBar from "./TopBar/SearchBar";
 import SideBarMenuIcon from "./TopBar/SideBarMenuIcon";
 import SwiperSelection from "./NotesArea/SwiperSelection";
 import AllNotesSection from "./NotesArea/AllNotesSection";
+import ContentNote from "../ContentNote";
 
 const ContextArea = () => {
   const {
@@ -42,10 +43,14 @@ const TopBar = () => {
 };
 
 const NotesArea = () => {
+  const { openContentNoteObject: { openContentNote }, isMobileObject :{isMobile} } = useGlobalContext();
   return (
-    <div className="mt-5">
+    <div className="flex gap-2 mt-5">
+      <div className={`${openContentNote ? `${isMobile ? "w-full" : "w-[50%]"}`: "w-full"}`}>
       <SwiperSelection />
       <AllNotesSection/>
+      </div>
+      <ContentNote/>
     </div>
   );
 };

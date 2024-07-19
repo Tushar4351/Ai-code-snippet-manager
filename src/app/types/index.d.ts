@@ -30,3 +30,13 @@ interface DarkModeType {
   icon: React.ReactNode;
 }
 
+interface SingleNoteType {
+  id: string;
+  title: string;
+  isImportant: boolean;
+  tags: string[];
+  description: string;
+  code: string;
+  language: string;
+  createdAt: string;
+}
