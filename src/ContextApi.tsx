@@ -7,7 +7,7 @@ import deleteIcon from "./assets/icons/delete.png";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
-import cIcon from "./assets/icons/c.png";
+
 
 interface GlobalContextType {
   sideBarMenuObject: {
@@ -53,6 +53,10 @@ interface GlobalContextType {
     selectedTags: SingleTagType[];
     setSelectedTags: React.Dispatch<React.SetStateAction<SingleTagType[]>>;
   };
+  selectedLanguageObject: {
+    selectedLanguage: SingleCodeLanguageType | null;
+    setSelectedLanguage: React.Dispatch<React.SetStateAction<SingleCodeLanguageType | null>>;
+  }
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -95,6 +99,10 @@ const ContextProvider = createContext<GlobalContextType>({
     selectedTags: [],
     setSelectedTags: () => {},
   },
+  selectedLanguageObject: {
+    selectedLanguage: null,
+    setSelectedLanguage: () => {},
+  }
 });
 
 export default function GlobalContextProvider({
@@ -142,6 +150,7 @@ export default function GlobalContextProvider({
   const [selectedNote, setSelectedNote] = useState<SingleNoteType | null>(null);
   const [isNewNote, setIsNewNote] = useState(false);
   const [selectedTags, setSelectedTags] = useState<SingleTagType[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<SingleCodeLanguageType | null>(null)
 
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
@@ -295,6 +304,21 @@ export default HelloWorld;
     setSelectedTags(selectedNote?.tags || []);
   }, [selectedNote]);
 
+  //this useeffect will check the title and the description and the code are empty.if yes it will be removed from the alll noted array to avoid havving empty notes
+  useEffect(() => {
+    if (openContentNote === false) {
+      
+    }
+    const filteredNotes = allNotes.filter((note) => {
+      return (
+        note.title.trim() !== "" ||
+        note.description.trim() !== "" ||
+        note.code.trim() !== ""
+      );
+    });
+    setAllNotes(filteredNotes);
+    }, [openContentNote]);
+
   return (
     <ContextProvider.Provider
       value={{
@@ -308,6 +332,7 @@ export default HelloWorld;
         isNewNoteObject: { isNewNote, setIsNewNote },
         allTagsObject: { allTags, setAllTags },
         selectedTagObject: { selectedTags, setSelectedTags },
+        selectedLanguageObject: {selectedLanguage, setSelectedLanguage}
       }}
     >
       {children}

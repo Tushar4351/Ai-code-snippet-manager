@@ -1,24 +1,24 @@
 import { useGlobalContext } from "@/ContextApi";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import CloseIcon from "../../../assets/icons/close.svg";
 import EditSectionIcon from "../../../assets/icons/editsection.svg";
 import CopyIcon from "../../../assets/icons/copy.svg";
-import javascriptIcon from "../../../assets/icons/javascript.png";
 import DownArrowIcon from "../../../assets/icons/downarrow.svg";
+import CheckIcon from "../../../assets/icons/check.svg";
+import UpArrowIcon from "../../../assets/icons/uparrow.svg";
+import SearchIcon from "../../../assets/icons/search.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
-
-
-
+import { allLanguages } from "@/app/localData/Languages";
 
 const ContentNote = () => {
   const {
@@ -28,6 +28,7 @@ const ContentNote = () => {
     darkModeObject: { darkMode },
     isNewNoteObject: { isNewNote, setIsNewNote },
     allNotesObject: { allNotes, setAllNotes },
+    selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
   } = useGlobalContext();
 
   const [singleNote, setSingleNote] = useState<SingleNoteType | undefined>(
@@ -40,28 +41,55 @@ const ContentNote = () => {
       }
     }
   }, [openContentNote, selectedNote]);
-  console.log(singleNote);
 
   //This useeffect is used to add the singlenote to the allnotes only if the singlenote is not empty
   useEffect(() => {
-    //if isnewnote is true
+    // if isNewNote is true
     if (isNewNote) {
-      //if the single note is not empty
-      if (singleNote && singleNote.title != "") {
-        //add the single note to the allnotes
-        setAllNotes([...allNotes, singleNote]);
-        //set the isnewnote false
+      // if the single note is not empty
+      if (singleNote && singleNote.title !== "") {
+        const updateAllNotes = [...allNotes, singleNote];
+        // sort the allNotes by date
+        const sortedAllNotes = updateAllNotes.sort((a, b) => {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        });
+        // add the single note to the allNotes
+        setAllNotes(sortedAllNotes);
+        // set isNewNote to false
         setIsNewNote(false);
       }
     }
   }, [singleNote]);
+  console.log("Slected note : ", singleNote);
+
+  useEffect(() => {
+    if (selectedLanguage && singleNote) {
+      const newLanguage = selectedLanguage.name;
+      const updateSingleNote: SingleNoteType = {
+        ...singleNote,
+        language: newLanguage,
+      };
+      const updateAllNotes = allNotes.map((note) => {
+        if (note.id === singleNote.id) {
+          return updateSingleNote;
+        }
+        return note;
+      });
+      setAllNotes(updateAllNotes);
+      setSingleNote(updateSingleNote);
+    }
+  }, [selectedLanguage]);
+  console.log("Slected Language : ", selectedLanguage);
+
   return (
     <div
-      className={` ${darkMode[1].isSelected ? "bg-[#151419]" :"bg-white border"} ${
-        isMobile ? "w-4/5" : "w-1/2"
-      } z-50  p-3 rounded-lg ${
+      className={`h-[950px] ${
+        darkMode[1].isSelected ? "bg-[#151419]" : "bg-white border"
+      } ${isMobile ? "w-4/5 mt-[50%] shadow-lg " : "w-1/2"} z-50  p-3 rounded-lg ${
         openContentNote ? "block" : "hidden"
-      } h-[700px] ${
+      } ${
         isMobile
           ? "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           : ""
@@ -75,7 +103,7 @@ const ContentNote = () => {
           />
           <NoteTags singleNote={singleNote} setSingleNote={setSingleNote} />
           <Description singleNote={singleNote} setSingleNote={setSingleNote} />
-          <CodeBlock/>
+          <CodeBlock singleNote={singleNote} setSingleNote={setSingleNote} />
         </div>
       )}
     </div>
@@ -149,7 +177,9 @@ const NoteTags = ({
   setSingleNote,
 }: {
   singleNote: SingleNoteType;
-  setSingleNote: React.Dispatch<React.SetStateAction<SingleNoteType | undefined>>;
+  setSingleNote: React.Dispatch<
+    React.SetStateAction<SingleNoteType | undefined>
+  >;
 }) => {
   const {
     allNotesObject: { allNotes, setAllNotes },
@@ -246,7 +276,7 @@ const TagsMenu = ({
               )
                 ? "bg-[#d5d0f8] text-[#9588e8]"
                 : ""
-            }` }
+            }`}
             key={tag.id}
           >
             {tag.name}
@@ -257,10 +287,13 @@ const TagsMenu = ({
   );
 };
 
-
-
-
-const Description = ({ singleNote, setSingleNote }: { singleNote: SingleNoteType; setSingleNote: (value:SingleNoteType)=> void}) => {
+const Description = ({
+  singleNote,
+  setSingleNote,
+}: {
+  singleNote: SingleNoteType;
+  setSingleNote: (value: SingleNoteType) => void;
+}) => {
   const {
     darkModeObject: { darkMode },
     allNotesObject: { allNotes, setAllNotes },
@@ -304,7 +337,9 @@ const Description = ({ singleNote, setSingleNote }: { singleNote: SingleNoteType
           className={`${
             darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : "text-gray-500"
           } ${
-            darkMode[1].isSelected && (isHovered || isFocused) ? "border-[#9588e8]" : ""
+            darkMode[1].isSelected && (isHovered || isFocused)
+              ? "border-[#9588e8]"
+              : ""
           }`}
         />
       </div>
@@ -312,58 +347,158 @@ const Description = ({ singleNote, setSingleNote }: { singleNote: SingleNoteType
   );
 };
 
+const CodeBlock = ({
+  singleNote,
+  setSingleNote,
+}: {
+  singleNote: SingleNoteType;
+  setSingleNote: (value: SingleNoteType) => void;
+}) => {
 
-
-
-const CodeBlock = () => {
-  const [code, setCode] = useState(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Textarea Hover and Focus Example</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .container {
-            margin: 20px;
-        }
-
-        .dark-mode {
-            background-color: #1f1e25;
-            color: white;
-        }
-
-        .dark-mode textarea {
-            background-color: #1f1e25;
-            color: white;
-            border: 1px solid #ccc;
-            padding: 10px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .dark-mode textarea:hover,
-        .dark-mode textarea:focus {
-            border-color: #9588e8;
-        }
-    </style>
-</head>
-<body>
-    <div class="container dark-mode">
-        <label for="description">Description</label>
-        <textarea id="description" placeholder="Type your Description here."></textarea>
-    </div>
-</body>
-</html>
-`);
   const {
     darkModeObject: { darkMode },
+    selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
+    selectedNoteObject: { selectedNote, setSelectedNote },
     allNotesObject: { allNotes, setAllNotes },
   } = useGlobalContext();
+
   const [isHovered, setIsHovered] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isCopied, seIsCopied] = useState(false);
+
+  useEffect(() => {
+    if (selectedNote) {
+      //if selectedNote is not empty when we add new snippet
+      //set the selectedlanguage to the select language text
+      if (selectedNote.language === "") {
+        setSelectedLanguage(allLanguages[0]);
+        return;
+      }
+      const findLanguage = allLanguages.find(
+        (language) =>
+          language.name.toLocaleLowerCase() ===
+          selectedNote.language.toLocaleLowerCase()
+      );
+
+      if (findLanguage) {
+        setSelectedLanguage(findLanguage);
+      }
+    }
+  }, [selectedNote]);
+  function handledChange(code: string) {
+    const newSingleNote = { ...singleNote, code: code };
+
+    const updateAllNotes = allNotes.map((note) => {
+      if (note.id === newSingleNote.id) {
+        return newSingleNote;
+      }
+      return note;
+    });
+    setAllNotes(updateAllNotes);
+    setSingleNote(newSingleNote);
+  }
+  function clickedCopyBtn() {
+    navigator.clipboard.writeText(singleNote.code);
+    seIsCopied(true);
+    setTimeout(() => {
+      seIsCopied(false);
+    }, 1200);
+  }
+
+  console.log(singleNote.code);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const LanguageMenu = () => {
+    const textRef = useRef<HTMLInputElement>(null);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    useEffect(() => {
+      textRef.current?.focus();
+    }, [isDropdownOpen]);
+
+    //Filtering Logic
+    const [filteredLanguages, setFilteredLanguages] = useState(allLanguages);
+    const menuRef = useRef<HTMLDivElement>(null);
+    const onChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(event.target.value.toLowerCase());
+    };
+    useEffect(() => {
+      //update filterlanguage based on search
+      const filtered = allLanguages.filter((language) =>
+        language.name.toLowerCase().includes(searchQuery)
+      );
+      setFilteredLanguages(filtered);
+    }, [searchQuery]);
+
+    const handleClickedOutSide = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    useEffect(() => {
+      document.addEventListener("mousedown", handleClickedOutSide);
+      return () =>
+        document.removeEventListener("mousedown", handleClickedOutSide);
+    }, []);
+
+    function clickedLanguage(language: SingleCodeLanguageType) {
+      setSelectedLanguage(language);
+      setIsDropdownOpen(false);
+    }
+
+    return (
+      <div
+        ref={menuRef}
+        className={`${
+          darkMode[1].isSelected ? "bg-slate-600" : ""
+        } h-[220px] absolute flex-col z-50 gap-2 p-3 w-[250px] rounded-md left-3 text-slate-400 flex bg-slate-100`}
+      >
+        <div
+          className={`${
+            darkMode[1].isSelected ? "bg-slate-800" : "bg-slate-200"
+          } p-1 rounded-md flex gap-1 mb-1`}
+        >
+          <Image
+            className="h-6 w-6 mr-1"
+            src={SearchIcon}
+            alt="Search icon"
+            width={20}
+            height={20}
+          />
+          <input
+            ref={textRef}
+            placeholder="Search Language"
+            onChange={onChangeSearch}
+            value={searchQuery}
+            className={`outline-none ${
+              darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-transparent"
+            } text-gray-500`}
+          />
+        </div>
+
+        <div className="h-40 bg-slate-100 overflow-x-auto">
+          {filteredLanguages.map((language) => (
+            <div
+              onClick={() => clickedLanguage(language)}
+              key={language.id}
+              className={`flex mb-2 ${
+                selectedLanguage?.name.toLocaleLowerCase() ===
+                language.name.toLocaleLowerCase()
+                  ? "bg-slate-200"
+                  : ""
+              } gap-2 hover:bg-slate-200 bg-transparent p-[6px] rounded-md items-center cursor-pointer`}
+            >
+              {language.icon}
+              <span className="mt-[1px]">{language.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="text-[12px] text-gray-400 mt-8">
@@ -374,51 +509,63 @@ const CodeBlock = () => {
           isHovered ? "border-[#9588e8]" : ""
         } border rounded-lg p-3 pt-16 w-full relative`}
       >
-        <div className="absolute top-4 right-4 z-50">
-        <CopyIcon className="w-6 h-6" />
+        <div className="absolute top-4 right-4 z-50 rounded-full hover:bg-slate-200 cursor-pointer p-2">
+          {isCopied ? (
+            <CheckIcon className="w-6 h-6" />
+          ) : (
+            <CopyIcon className="w-6 h-6" onClick={() => clickedCopyBtn()} />
+          )}
         </div>
-        <div className={`flex absolute top-1 gap-2 justify-between p-[6px] px-3 left-3 items-center text-gray-500 mt-3 text-[12px] rounded-md bg-slate-100 cursor-pointer${
-            darkMode[1].isSelected? "bg-slate-600 text-white": "bg-slate-100 text-slate-400"
-          }`} >
+        <div
+          onClick={toggleDropdown}
+          className={`flex absolute top-1 gap-2 justify-between p-[6px] px-3 left-3 items-center text-gray-500 mt-3 text-[12px] rounded-md cursor-pointer ${
+            darkMode[1].isSelected
+              ? "bg-slate-600 text-white"
+              : "bg-slate-100 text-slate-400"
+          }`}
+        >
           <div className="flex gap-2 items-center">
-            <Image
-              src={javascriptIcon}
-              alt="JavaScriptLogo"
-              className="h-6 w-6 mr-1"
-              width={20}
-              height={20}
-            />
-            <span className="mt-[1px]">JavaScript</span>
+            {selectedLanguage?.icon}
+            <span className="mt-[1px]">
+              {selectedLanguage?.name
+                ? selectedLanguage.name
+                : "Select language"}
+            </span>
           </div>
-         <DownArrowIcon className="w-5 h-5"/>
+          {isDropdownOpen ? (
+            <UpArrowIcon className="w-3 h-3" />
+          ) : (
+            <DownArrowIcon className="w-3 h-3" />
+          )}
         </div>
+        {isDropdownOpen && <LanguageMenu />}
+
         <AceEditor
-  placeholder="Placeholder Text"
-  mode="javascript"
-     theme="tomorrow"
+          placeholder="Placeholder Text"
+          mode="javascript"
+          theme="tomorrow"
           name="blah2"
           width="100%"
-          height="300px"
-  fontSize={14}
-  lineHeight={19}
-  showPrintMargin={true}
-  showGutter={false}
+          height="580px"
+          fontSize={14}
+          lineHeight={19}
+          showPrintMargin={true}
+          showGutter={false}
           highlightActiveLine={true}
-          className={`
-            ${darkMode[1].isSelected ? "bg-transparent text-white" : "bg-white"}`}
-  value={`function onLoad(editor) {
-  console.log("i've loaded");
-}`}
-setOptions={{
-  enableBasicAutocompletion: true,
-  enableLiveAutocompletion: false,
-  enableSnippets: false,
-  showLineNumbers: false,
-  tabSize: 2,
-  }}/>
+          className={`${
+            darkMode[1].isSelected ? "bg-transparent text-white" : "bg-white"
+          }`}
+          value={singleNote.code}
+          onChange={handledChange}
+          setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: false,
+            enableSnippets: false,
+            showLineNumbers: false,
+            tabSize: 2,
+          }}
+        />
       </div>
     </div>
   );
-}
-
-
+};

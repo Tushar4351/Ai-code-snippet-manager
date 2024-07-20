@@ -43,3 +43,9 @@ interface SingleNoteType {
   language: string;
   createdAt: string;
 }
+
+interface SingleCodeLanguageType {
+  id: string;
+  name: string;
+  icon: React.ReactNode;
+}

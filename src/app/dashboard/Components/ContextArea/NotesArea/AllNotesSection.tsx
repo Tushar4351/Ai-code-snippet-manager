@@ -4,15 +4,19 @@ import importantIcon from "../../../../../assets/icons/important.png";
 import EditIcon from "../../../../../assets/icons/edit.svg"
 import JavaScriptIcon from "../../../../../assets/icons/javascript.png";
 import Image from "next/image";
-import React from "react";
+import React, { useEffect } from "react";
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialLight, oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { getLanguageIcon } from "@/app/localData/LanguageTextToIcon";
 
 const AllNotesSection = () => {
   const {
     allNotesObject: { allNotes },
     openContentNoteObject: { openContentNote }
   } = useGlobalContext();
+  useEffect(() => {
+    // Any actions you want to perform when allNotes changes
+  }, [allNotes]);
   return (
     <div className={ `mt-5 gap-4 ${openContentNote ? "" : "flex flex-wrap"}`}>
       {allNotes.map((note, index) => (
@@ -126,7 +130,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language,code}) => {
   return (
     <div className="rounded-md overflow-hidden text-sm">
       <SyntaxHighlighter
-        language={language.toLowerCase()}
+        language={"javascript"}
         style={darkMode[1].isSelected ? oneDark : materialLight}
       >
         {code}
@@ -134,26 +138,14 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language,code}) => {
     </div>
   );
 };
-const NotFooter = ({language}: {language: string}) => {
+const NotFooter = ({ language }: { language: string }) => {
+  const { selectedLanguageObject: {selectedLanguage, setSelectedLanguage} } = useGlobalContext();
     return (
       <div className="flex justify-between items-center text-[13px] text-gray-400 mx-4 mt-3">
         <div className="flex items-center">
-          <Image
-            src={JavaScriptIcon}
-            alt="JavaScriptLogo"
-            className="h-6 w-6 mr-1"
-            width={20}
-            height={20}
-          />
+          {getLanguageIcon(language)}
           <span>{ language}</span>
         </div>
-        <Image
-          src={deleteIcon}
-          alt="DeleteLogo"
-          className="h-6 w-6 cursor-pointer"
-          width={20}
-          height={20}
-        />
       </div>
     )
   }
