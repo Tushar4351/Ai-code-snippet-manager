@@ -1,7 +1,9 @@
+
+
 /* eslint-disable no-unused-vars */
 
 // ====== USER PARAMS
-import { StaticImageData } from "next/image";
+
 declare type CreateUserParams = {
   clerkId: string;
   email: string;
@@ -24,12 +26,7 @@ interface SideBarMenu {
   isSelected: boolean;
   icon: React.ReactNode;
 }
-interface DarkModeType {
-  id: number;
-  name: string;
-  isSelected: boolean;
-  icon: StaticImageData;
-}
+
 interface SingleTagType {
   id: string;
   name: string;

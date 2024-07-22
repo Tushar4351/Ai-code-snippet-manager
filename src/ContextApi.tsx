@@ -7,7 +7,14 @@ import DeleteIcon from "./assets/icons/delete.svg";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
+import { StaticImageData } from "next/image";
 
+interface DarkModeType {
+  id: number;
+  name: string;
+  isSelected: boolean;
+  icon: StaticImageData;
+}
 
 interface GlobalContextType {
   sideBarMenuObject: {
@@ -133,11 +140,13 @@ export default function GlobalContextProvider({
   const [darkMode, setDarkMode] = useState<DarkModeType[]>([
     {
       id: 1,
+      name: "Dark Mode",
       isSelected: true,
       icon: sunIcon,
     },
     {
       id: 2,
+      name: "Light Mode",
       isSelected: false,
       icon: nightIcon,
     },

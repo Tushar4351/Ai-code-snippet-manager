@@ -62,7 +62,6 @@ const ContentNote = () => {
       }
     }
   }, [singleNote]);
-  console.log("Slected note : ", singleNote);
 
   useEffect(() => {
     if (selectedLanguage && singleNote) {
