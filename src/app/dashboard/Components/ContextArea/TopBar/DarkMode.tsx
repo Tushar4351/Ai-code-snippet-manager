@@ -31,11 +31,11 @@ const DarkMode = () => {
         relative w-[84px] h-[36px] peer-checked:bg-zinc-500 bg-gray-100
         rounded-full shadow-sm transition-colors duration-300
         after:absolute after:content-[''] after:rounded-full
-        after:h-[34px] after:w-[38px] after:bg-[#9588e8] 
-        after:top-[2px] after:left-[5px] after:shadow-md
+        after:h-[35px] after:w-[40px] after:bg-[#9588e8] 
+        after:top-[1px] after:left-[3px] after:shadow-md
         after:transition-all after:duration-300
-        peer-checked:after:bg-[#9588e8]  peer-checked:after:translate-x-[38px]
-        peer-active:after:w-[38px]
+        peer-checked:after:bg-[#9588e8]  peer-checked:after:translate-x-[40px]
+        peer-active:after:w-[40px]
       `}
       ></div>
       {darkMode.map((item, index) => (
@@ -43,7 +43,7 @@ const DarkMode = () => {
           key={index}
           className={`
             absolute transition-all duration-300
-            ${index === 0 ? "left-[13px]" : "right-[13px]"}
+            ${index === 0 ? "left-[13px]" : "right-[10px]"}
             ${
               isChecked
                 ? index === 0

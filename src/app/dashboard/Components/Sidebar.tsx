@@ -65,13 +65,7 @@ const Sidebar = () => {
               onClick={() => clickedMenu(index)}
               className={`flex items-center gap-2 px-3 pr-10 py-2 ${link.isSelected ? "bg-[#9588e8] text-white" : "text-black"} hover:bg-[#9588e8] w-full rounded-lg`}
             >
-              <Image
-                src={link.icon}
-                alt={link.name}
-                className="h-6 w-6"
-                width={20}
-                height={20}
-              />
+             {link.icon}
               <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>
                 {link.name}
               </span>

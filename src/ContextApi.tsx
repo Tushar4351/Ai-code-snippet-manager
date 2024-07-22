@@ -1,9 +1,9 @@
 "use client";
 
 import { useContext, createContext, useState, useEffect } from "react";
-import snippetIcon from "./assets/icons/snippet.png";
-import importantIcon from "./assets/icons/important.png";
-import deleteIcon from "./assets/icons/delete.png";
+import SnippetIcon from "./assets/icons/snippet.svg";
+import ImportantIcon from "./assets/icons/important.svg";
+import DeleteIcon from "./assets/icons/delete.svg";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
@@ -115,19 +115,19 @@ export default function GlobalContextProvider({
       id: 1,
       name: "Snippets",
       isSelected: true,
-      icon: snippetIcon,
+      icon: <SnippetIcon className="h-6 w-6 cursor-pointer"/>,
     },
     {
       id: 2,
       name: "Important",
       isSelected: false,
-      icon: importantIcon,
+      icon:  <ImportantIcon className="h-6 w-6 cursor-pointer"/>,
     },
     {
       id: 3,
       name: "Delete",
       isSelected: false,
-      icon: deleteIcon,
+      icon: <DeleteIcon className="w-6 h-6 cursor-pointer"/>,
     },
   ]);
   const [darkMode, setDarkMode] = useState<DarkModeType[]>([

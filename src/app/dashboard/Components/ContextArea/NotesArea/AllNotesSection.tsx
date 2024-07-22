@@ -1,24 +1,32 @@
 import { useGlobalContext } from "@/ContextApi";
-import deleteIcon from "../../../../../assets/icons/delete.png";
-import importantIcon from "../../../../../assets/icons/important.png";
-import EditIcon from "../../../../../assets/icons/edit.svg"
-import JavaScriptIcon from "../../../../../assets/icons/javascript.png";
-import Image from "next/image";
+import DeleteIcon from "../../../../../assets/icons/delete.svg";
+import ImportantIcon from "../../../../../assets/icons/important.svg";
+import EditIcon from "../../../../../assets/icons/edit.svg";
 import React, { useEffect } from "react";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { materialLight, oneDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import {
+  materialLight,
+  oneDark,
+} from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { getLanguageIcon } from "@/app/localData/LanguageTextToIcon";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 const AllNotesSection = () => {
   const {
     allNotesObject: { allNotes },
-    openContentNoteObject: { openContentNote }
+    openContentNoteObject: { openContentNote },
   } = useGlobalContext();
   useEffect(() => {
     // Any actions you want to perform when allNotes changes
   }, [allNotes]);
   return (
-    <div className={ `mt-5 gap-4 ${openContentNote ? "" : "flex flex-wrap"}`}>
+    <div className={`mt-5 gap-4 ${openContentNote ? "" : "flex flex-wrap gap-4"}`}>
       {allNotes.map((note, index) => (
         <div key={index}>
           <SingleNote note={note} />
@@ -28,38 +36,48 @@ const AllNotesSection = () => {
   );
 };
 
-export default AllNotesSection
+export default AllNotesSection;
 
-
-
-const SingleNote = ({note}:{note: SingleNoteType}) => {
-    const {
-      darkModeObject: { darkMode },
-      openContentNoteObject: { openContentNote }
+const SingleNote = ({ note }: { note: SingleNoteType }) => {
+  const {
+    darkModeObject: { darkMode },
+    openContentNoteObject: { openContentNote },
   } = useGlobalContext();
-  
-  const { title, createdAt, tags, description, code, isImportant, language } = note;
+  console.log("single note :", note);
+  const { title, createdAt, tags, description, code, isImportant, language } =
+    note;
 
   return (
     <div
       className={`${
-        darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"} ${openContentNote ? "w-full" : "w-[366px]"} max-sm:w-full rounded-lg py-4`}
+        darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"
+      } ${
+        openContentNote ? "w-full mb-4" : "w-[366px]"
+      } max-sm:w-full rounded-lg py-4`}
     >
-      <NoteHeader title={title} isImportant={isImportant} note={note}/>
+      <NoteHeader title={title} isImportant={isImportant} note={note} />
       <NoteDate createdAt={createdAt} />
       <NoteTags tags={tags} />
       <NoteDescription description={description} />
       <CodeBlock language={language} code={code} />
-      <NotFooter language={language}/>
+      <NotFooter language={language} />
     </div>
   );
-}
+};
 
-
-const NoteHeader = ({ title, isImportant, note }: { title: string; isImportant: boolean; note: SingleNoteType }) => {
-  const { 
+const NoteHeader = ({
+  title,
+  isImportant,
+  note,
+}: {
+  title: string;
+  isImportant: boolean;
+  note: SingleNoteType;
+}) => {
+  const {
     openContentNoteObject: { setOpenContentNote },
-    selectedNoteObject: { setSelectedNote }
+    selectedNoteObject: { setSelectedNote },
+    darkModeObject: { darkMode },
   } = useGlobalContext();
 
   const handleEditClick = () => {
@@ -68,32 +86,58 @@ const NoteHeader = ({ title, isImportant, note }: { title: string; isImportant: 
   };
 
   return (
-    <div className="flex justify-between mx-4">
+    <div className="flex justify-between items-center mx-4">
       <span className="font-bold text-lg w-[87%]">{title}</span>
-      <div className="flex gap-2">
-        <EditIcon
-          className="w-7 h-7 cursor-pointer"
-          onClick={handleEditClick}
-        />
-        <Image
-          src={importantIcon}
-          alt="ImportantLogo"
-          className="h-6 w-6 cursor-pointer"
-          width={20}
-          height={20}
-        />
+      <div className="flex gap-1">
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button className={`${
+        darkMode[1].isSelected ? "bg-[#151419] hover:bg-gray-800" : "bg-white hover:bg-gray-200"}  border-none rounded-full p-2`}>
+                <EditIcon
+                  className="w-6 h-6 cursor-pointer"
+                  onClick={handleEditClick}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className={`${
+        darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""}`}>
+              <p>Edit Note</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button className={`${
+        darkMode[1].isSelected ? "bg-[#151419] hover:bg-gray-800" : "bg-white hover:bg-gray-200"}  border-none rounded-full p-2`}>
+                <ImportantIcon
+                  className="w-6 h-6 cursor-pointer"
+                  onClick={handleEditClick}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className={`${
+        darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""}`}>
+              <p>Important Note</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
       </div>
     </div>
   );
-}
+};
 
-const NoteDate = ({createdAt}: { createdAt : string}) => {
-    return (
-        <div className="text-gray-400 text-[11px] flex gap-1 font-light mx-4 mt-1">
-        <span>{createdAt}</span>
-      </div>
-    )
-}
+const NoteDate = ({ createdAt }: { createdAt: string }) => {
+  return (
+    <div className="text-gray-400 text-[11px] flex gap-1 font-light mx-4 mt-1">
+      <span>{createdAt}</span>
+    </div>
+  );
+};
 const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
   return (
     <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
@@ -108,25 +152,29 @@ const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
     </div>
   );
 };
-const NoteDescription = ({description}: {description: string}) => {
-    const {
-        darkModeObject: { darkMode },
-      } = useGlobalContext();
-    return (
-        <div className={`${darkMode[1].isSelected ? " text-white" : ""} text-gray-400 text-[13px] mt-4 mx-4`}>
-           {description}
-      </div>
-    )
-}
-interface CodeBlockProps{
-  language: string;
-  code: string;
-  }
-const CodeBlock: React.FC<CodeBlockProps> = ({ language,code}) => {
+const NoteDescription = ({ description }: { description: string }) => {
   const {
     darkModeObject: { darkMode },
   } = useGlobalContext();
-  
+  return (
+    <div
+      className={`${
+        darkMode[1].isSelected ? " text-white" : ""
+      } text-gray-400 text-[13px] mt-4 mx-4`}
+    >
+      {description}
+    </div>
+  );
+};
+interface CodeBlockProps {
+  language: string;
+  code: string;
+}
+const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
+  const {
+    darkModeObject: { darkMode },
+  } = useGlobalContext();
+
   return (
     <div className="rounded-md overflow-hidden text-sm">
       <SyntaxHighlighter
@@ -139,13 +187,31 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language,code}) => {
   );
 };
 const NotFooter = ({ language }: { language: string }) => {
-  const { selectedLanguageObject: {selectedLanguage, setSelectedLanguage} } = useGlobalContext();
-    return (
-      <div className="flex justify-between items-center text-[13px] text-gray-400 mx-4 mt-3">
-        <div className="flex items-center">
-          {getLanguageIcon(language)}
-          <span>{ language}</span>
-        </div>
+  const {
+    selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
+    darkModeObject: { darkMode },
+  } = useGlobalContext();
+  return (
+    <div className="flex justify-between items-center text-[13px] text-gray-400 mx-4 mt-3">
+      <div className="flex items-center">
+        {getLanguageIcon(language)}
+        <span>{language}</span>
       </div>
-    )
-  }
+      <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button className={`${
+        darkMode[1].isSelected ? "bg-[#151419] hover:bg-gray-800" : "bg-white hover:bg-gray-200"}  border-none rounded-full p-2`}>
+             <DeleteIcon className="w-6 h-6 cursor-pointer" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent className={`${
+        darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""}`}>
+              <p>Delete Note</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      
+    </div>
+  );
+};

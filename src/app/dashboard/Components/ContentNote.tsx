@@ -87,9 +87,9 @@ const ContentNote = () => {
     <div
       className={`h-[950px] ${
         darkMode[1].isSelected ? "bg-[#151419]" : "bg-white border"
-      } ${isMobile ? "w-4/5 mt-[50%] shadow-lg " : "w-1/2"} z-50  p-3 rounded-lg ${
-        openContentNote ? "block" : "hidden"
       } ${
+        isMobile ? "w-4/5 mt-[50%] shadow-lg " : "w-1/2"
+      } z-50  p-3 rounded-lg ${openContentNote ? "block" : "hidden"} ${
         isMobile
           ? "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           : ""
@@ -354,7 +354,6 @@ const CodeBlock = ({
   singleNote: SingleNoteType;
   setSingleNote: (value: SingleNoteType) => void;
 }) => {
-
   const {
     darkModeObject: { darkMode },
     selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
