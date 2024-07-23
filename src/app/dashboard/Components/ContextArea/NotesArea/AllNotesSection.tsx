@@ -176,7 +176,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ language, code }) => {
   } = useGlobalContext();
 
   return (
-    <div className="rounded-md overflow-hidden text-sm">
+    <div className="rounded-md overflow-hidden text-sm px-4">
       <SyntaxHighlighter
         language={"javascript"}
         style={darkMode[1].isSelected ? oneDark : materialLight}

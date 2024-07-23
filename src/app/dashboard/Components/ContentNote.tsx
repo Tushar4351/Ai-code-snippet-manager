@@ -8,11 +8,18 @@ import CheckIcon from "../../../assets/icons/check.svg";
 import UpArrowIcon from "../../../assets/icons/uparrow.svg";
 import SearchIcon from "../../../assets/icons/search.png";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Image from "next/image";
@@ -80,20 +87,48 @@ const ContentNote = () => {
       setSingleNote(updateSingleNote);
     }
   }, [selectedLanguage]);
-  console.log("Slected Language : ", selectedLanguage);
 
   return (
     <div
-      className={`h-[950px] ${
+      className={`h-[1130px] ${
         darkMode[1].isSelected ? "bg-[#151419]" : "bg-white border"
       } ${
-        isMobile ? "w-4/5 mt-[50%] shadow-lg " : "w-1/2"
-      } z-50  p-3 rounded-lg ${openContentNote ? "block" : "hidden"} ${
+        isMobile ? "w-4/5 mt-[80%] shadow-lg " : "w-1/2"
+      } z-50  p-3 rounded-lg ${openContentNote ? "block " : "hidden"} ${
         isMobile
           ? "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
           : ""
       }`}
     >
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              className={`${
+                darkMode[1].isSelected
+                  ? "bg-[#151419] hover:bg-gray-800"
+                  : "bg-white hover:bg-gray-200"
+              }  border-none rounded-full p-2`}
+            >
+              <CloseIcon
+                onClick={() => {
+                  setIsNewNote(false);
+                  setOpenContentNote(false);
+                }}
+                className="cursor-pointer w-6 h-6 "
+              />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent
+            className={`${
+              darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""
+            }`}
+          >
+            <p>Delete Note</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+
       {singleNote && (
         <div>
           <ContentNoteHeader
@@ -124,6 +159,7 @@ const ContentNoteHeader = ({
     allNotesObject: { allNotes, setAllNotes },
     openContentNoteObject: { setOpenContentNote },
     isNewNoteObject: { isNewNote, setIsNewNote },
+    darkModeObject: { darkMode },
   } = useGlobalContext();
 
   const [onFocus, setOnFocus] = useState(false);
@@ -146,9 +182,15 @@ const ContentNoteHeader = ({
     }
   }
   return (
-    <div className="flex justify-between gap-8 mb-4">
-      <div className="flex gap-2 w-full">
-        <textarea
+    <div className="flex justify-between gap-8">
+      <div className="flex flex-col gap-2 w-full p-3">
+        <Label
+          htmlFor="message"
+          className={`${darkMode[1].isSelected ? "text-white" : ""} text-lg`}
+        >
+          Title
+        </Label>
+        <Textarea
           onChange={onUpdateTitle}
           onKeyDown={handleKeyDown}
           onBlur={() => setOnFocus(false)}
@@ -157,16 +199,11 @@ const ContentNoteHeader = ({
           onMouseLeave={() => setOnFocus(false)}
           placeholder="New Title.."
           value={singleNote.title}
-          className="font-bold text-xl outline-none resize-none h-auto overflow-hidden w-full"
+          className={`${
+            darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : "text-gray-500"
+          } ${darkMode[1].isSelected && onFocus ? "border-[#9588e8]" : ""}`}
         />
       </div>
-      <CloseIcon
-        onClick={() => {
-          setIsNewNote(false);
-          setOpenContentNote(false);
-        }}
-        className="text-gray-500 cursor-pointer w-6 h-6"
-      />
     </div>
   );
 };
@@ -182,6 +219,7 @@ const NoteTags = ({
 }) => {
   const {
     allNotesObject: { allNotes, setAllNotes },
+    darkModeObject: { darkMode },
   } = useGlobalContext();
 
   const [hovered, setHovered] = useState(false);
@@ -208,14 +246,20 @@ const NoteTags = ({
   }
 
   return (
-    <div className="flex text-[13px] items-center gap-2">
+    <div className="flex text-[13px] items-center gap-2 p-3">
       <div
-        className="flex justify-between w-full flex-col"
+        className="flex justify-between w-full flex-col gap-2"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => {
           if (!isOpened) setHovered(false);
         }}
       >
+        <Label
+          htmlFor="message"
+          className={`${darkMode[1].isSelected ? "text-white" : ""} text-lg`}
+        >
+          Add Tags
+        </Label>
         <div className="flex gap-2 items-center select-none flex-wrap">
           {singleNote.tags.length === 0 && (
             <div>
@@ -317,11 +361,11 @@ const Description = ({
   }
 
   return (
-    <div className="mt-8">
+    <div className="p-3">
       <div className="grid w-full gap-1.5">
         <Label
           htmlFor="message"
-          className={`${darkMode[1].isSelected ? "text-white" : ""}`}
+          className={`${darkMode[1].isSelected ? "text-white" : ""} text-lg`}
         >
           Description
         </Label>
@@ -451,12 +495,12 @@ const CodeBlock = ({
       <div
         ref={menuRef}
         className={`${
-          darkMode[1].isSelected ? "bg-slate-600" : ""
-        } h-[220px] absolute flex-col z-50 gap-2 p-3 w-[250px] rounded-md left-3 text-slate-400 flex bg-slate-100`}
+          darkMode[1].isSelected ? "bg-[#151419] border" : "bg-slate-100"
+        } h-[220px] absolute flex-col z-50 gap-2 p-3 w-[250px] rounded-md left-3 text-slate-400 flex `}
       >
         <div
           className={`${
-            darkMode[1].isSelected ? "bg-slate-800" : "bg-slate-200"
+            darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-slate-200"
           } p-1 rounded-md flex gap-1 mb-1`}
         >
           <Image
@@ -477,7 +521,7 @@ const CodeBlock = ({
           />
         </div>
 
-        <div className="h-40 bg-slate-100 overflow-x-auto">
+        <div className="h-40 overflow-x-auto">
           {filteredLanguages.map((language) => (
             <div
               onClick={() => clickedLanguage(language)}
@@ -499,7 +543,13 @@ const CodeBlock = ({
   };
 
   return (
-    <div className="text-[12px] text-gray-400 mt-8">
+    <div className="text-[12px] flex flex-col gap-2 p-3">
+      <Label
+        htmlFor="message"
+        className={`${darkMode[1].isSelected ? "text-white" : ""} text-lg`}
+      >
+        Code
+      </Label>
       <div
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -507,18 +557,42 @@ const CodeBlock = ({
           isHovered ? "border-[#9588e8]" : ""
         } border rounded-lg p-3 pt-16 w-full relative`}
       >
-        <div className="absolute top-4 right-4 z-50 rounded-full hover:bg-slate-200 cursor-pointer p-2">
+        <div className={` absolute top-4 right-4 z-50 rounded-full `}>
           {isCopied ? (
             <CheckIcon className="w-6 h-6" />
           ) : (
-            <CopyIcon className="w-6 h-6" onClick={() => clickedCopyBtn()} />
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    className={`${
+                      darkMode[1].isSelected
+                        ? "bg-[#151419] hover:bg-gray-800"
+                        : "bg-white hover:bg-gray-200"
+                    }  border-none rounded-full p-2`}
+                  >
+                    <CopyIcon
+                      onClick={() => clickedCopyBtn()}
+                      className="cursor-pointer w-6 h-6 "
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent
+                  className={`${
+                    darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""
+                  }`}
+                >
+                  <p>Copy Code</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </div>
         <div
           onClick={toggleDropdown}
           className={`flex absolute top-1 gap-2 justify-between p-[6px] px-3 left-3 items-center text-gray-500 mt-3 text-[12px] rounded-md cursor-pointer ${
             darkMode[1].isSelected
-              ? "bg-slate-600 text-white"
+              ? "bg-[#1f1e25] text-white"
               : "bg-slate-100 text-slate-400"
           }`}
         >
@@ -531,7 +605,7 @@ const CodeBlock = ({
             </span>
           </div>
           {isDropdownOpen ? (
-            <UpArrowIcon className="w-3 h-3" />
+            <UpArrowIcon className="w-3 h-3 " />
           ) : (
             <DownArrowIcon className="w-3 h-3" />
           )}
@@ -551,7 +625,7 @@ const CodeBlock = ({
           showGutter={false}
           highlightActiveLine={true}
           className={`${
-            darkMode[1].isSelected ? "bg-transparent text-white" : "bg-white"
+            darkMode[1].isSelected ? "bg-[#1f1e25] text-white rounded-lg" : ""
           }`}
           value={singleNote.code}
           onChange={handledChange}
