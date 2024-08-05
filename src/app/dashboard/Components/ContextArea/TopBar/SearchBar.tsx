@@ -46,6 +46,7 @@ const AddSnippetButton = () => {
       code: "",
       isImportant: false,
       language: "",
+      isDeleted: false
     };
 
     setAllNotes([newSingleNote, ...allNotes]);
@@ -62,6 +63,10 @@ const AddSnippetButton = () => {
       day: "numeric",
       month: "short",
       year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
     };
     return new Intl.DateTimeFormat("en-US", options).format(date);
   }
@@ -69,7 +74,7 @@ const AddSnippetButton = () => {
   return (
     <div
       onClick={openTheContentNote}
-      className="absolute flex gap-2 px-3 rounded-3xl max-md:px-1 bg-black p-1 text-[13px] text-white top-[5px] right-[6px] items-center cursor-pointer select-none"
+      className="absolute flex gap-2 px-3 rounded-3xl max-md:px-1 bg-black p-1 text-[13px] text-white right-[6px] items-center cursor-pointer select-none"
     >
       <PlusIcon />
       <div className="max-md:hidden">Snippet</div>

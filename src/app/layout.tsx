@@ -4,6 +4,7 @@ import clsx from "clsx";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import GlobalContextProvider from "@/ContextApi";
+import { Toaster } from "@/components/ui/toaster"
 
 const dmSans = DM_Sans({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <GlobalContextProvider>
           <body className={clsx(dmSans.className, "antialiased")}>
             {children}
+            <Toaster />
           </body>
         </GlobalContextProvider>
       </ClerkProvider>

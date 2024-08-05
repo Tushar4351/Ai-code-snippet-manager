@@ -176,97 +176,99 @@ export default function GlobalContextProvider({
     function updateAllNotes() {
       const allNotes = [
         {
-          id: uuidv4(),
-          title: "Introduction to JavaScript",
-          isImportant: true,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description:
-            "A basic introduction to JavaScript programming language.",
-          code: `
-import React from "react";
-            
-function HelloWorld() {
-return <h1>Hello World</h1>;
-}
-            
-export default HelloWorld;
-          `,
-          language: "JavaScript",
-          createdAt: "2023-07-01T10:00:00Z",
+            id: uuidv4(),
+            title: "Introduction to JavaScript",
+            isImportant: true,
+            tags: [
+                { id: uuidv4(), name: "tag1" },
+                { id: uuidv4(), name: "tag2" },
+                { id: uuidv4(), name: "tag3" },
+            ],
+            description: "A basic introduction to JavaScript programming language.",
+            code: `
+    import React from "react";
+                
+    function HelloWorld() {
+    return <h1>Hello World</h1>;
+    }
+                
+    export default HelloWorld;
+            `,
+            language: "JavaScript",
+            createdAt: "2023-07-01T10:00:00Z",
+            isDeleted: false
         },
         {
-          id: uuidv4(),
-          title: "JavaScript for Data Science",
-          isImportant: false,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description: "Using JavaScript for data science with React.",
-          code: `
-  import React from "react";
-            
-  function HelloWorld() {
-  return <h1>Hello World</h1>;
-  }
-            
-  export default HelloWorld;
-          `,
-          language: "JavaScript",
-          createdAt: "2023-07-02T14:30:00Z",
+            id: uuidv4(),
+            title: "JavaScript for Data Science",
+            isImportant: false,
+            tags: [
+                { id: uuidv4(), name: "tag1" },
+                { id: uuidv4(), name: "tag2" },
+                { id: uuidv4(), name: "tag3" },
+            ],
+            description: "Using JavaScript for data science with React.",
+            code: `
+    import React from "react";
+                
+    function HelloWorld() {
+    return <h1>Hello World</h1>;
+    }
+                
+    export default HelloWorld;
+            `,
+            language: "JavaScript",
+            createdAt: "2023-07-02T14:30:00Z",
+            isDeleted: false
         },
         {
-          id: uuidv4(),
-          title: "JavaScript Flexbox Layout",
-          isImportant: true,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-
-          description:
-            "A guide to CSS Flexbox layout using JavaScript and React.",
-          code: `
-            import React from "react";
-            
-            function HelloWorld() {
-              return <h1>Hello World</h1>;
-            }
-            
-            export default HelloWorld;
-          `,
-          language: "JavaScript",
-          createdAt: "2023-07-03T09:00:00Z",
+            id: uuidv4(),
+            title: "JavaScript Flexbox Layout",
+            isImportant: true,
+            tags: [
+                { id: uuidv4(), name: "tag1" },
+                { id: uuidv4(), name: "tag2" },
+                { id: uuidv4(), name: "tag3" },
+            ],
+            description: "A guide to CSS Flexbox layout using JavaScript and React.",
+            code: `
+    import React from "react";
+                
+    function HelloWorld() {
+    return <h1>Hello World</h1>;
+    }
+                
+    export default HelloWorld;
+            `,
+            language: "JavaScript",
+            createdAt: "2023-07-03T09:00:00Z",
+            isDeleted: false
         },
         {
-          id: uuidv4(),
-          title: "JavaScript Basics",
-          isImportant: false,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description: "Basic JavaScript concepts for beginners using React.",
-          code: `
-            import React from "react";
-            
-            function HelloWorld() {
-              return <h1>Hello World</h1>;
-            }
-            
-            export default HelloWorld;
-          `,
-          language: "JavaScript",
-          createdAt: "2023-07-04T12:15:00Z",
+            id: uuidv4(),
+            title: "JavaScript Basics",
+            isImportant: false,
+            tags: [
+                { id: uuidv4(), name: "tag1" },
+                { id: uuidv4(), name: "tag2" },
+                { id: uuidv4(), name: "tag3" },
+            ],
+            description: "Basic JavaScript concepts for beginners using React.",
+            code: `
+    import React from "react";
+                
+    function HelloWorld() {
+    return <h1>Hello World</h1>;
+    }
+                
+    export default HelloWorld;
+            `,
+            language: "JavaScript",
+            createdAt: "2023-07-04T12:15:00Z",
+            isDeleted: false
         },
-      ];
+    ];
+    
 
       setTimeout(() => {
         setAllNotes(allNotes);

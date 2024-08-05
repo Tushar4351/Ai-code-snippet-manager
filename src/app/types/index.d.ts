@@ -40,6 +40,7 @@ interface SingleNoteType {
   code: string;
   language: string;
   createdAt: string;
+  isDeleted: boolean;
 }
 
 interface SingleCodeLanguageType {

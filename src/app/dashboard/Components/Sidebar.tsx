@@ -28,7 +28,7 @@ const Sidebar = () => {
       style={{
         paddingRight: "5rem"
       }}
-      className={`${openSideBar? "fixed z-50 shadow-lg" : "hidden md:flex"} p-6 pt-7 flex-col border-r ${darkMode[1].isSelected ? "bg-[#0c0b10]" : "bg-white"} h-screen`}
+      className={`${openSideBar? "fixed z-50 shadow-lg" : "hidden md:flex"} p-6 pt-7 flex-col  ${darkMode[1].isSelected ? "bg-[#0c0b10]" : "bg-white border-r"} h-screen`}
     >
       <div className="flex items-center gap-2 border-b pb-4">
         <div className="flex flex-row items-center">
