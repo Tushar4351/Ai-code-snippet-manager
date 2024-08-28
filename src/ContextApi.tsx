@@ -64,6 +64,10 @@ interface GlobalContextType {
     selectedLanguage: SingleCodeLanguageType | null;
     setSelectedLanguage: React.Dispatch<React.SetStateAction<SingleCodeLanguageType | null>>;
   }
+  openConfirmationWindowObject: {
+    openConfirmationWindow: boolean;
+    setOpenConfirmationWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  }
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -109,6 +113,10 @@ const ContextProvider = createContext<GlobalContextType>({
   selectedLanguageObject: {
     selectedLanguage: null,
     setSelectedLanguage: () => {},
+  },
+  openConfirmationWindowObject: {
+    openConfirmationWindow: false,
+    setOpenConfirmationWindow: () => {},
   }
 });
 
@@ -160,7 +168,7 @@ export default function GlobalContextProvider({
   const [isNewNote, setIsNewNote] = useState(false);
   const [selectedTags, setSelectedTags] = useState<SingleTagType[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<SingleCodeLanguageType | null>(null)
-
+  const [openConfirmationWindow, setOpenConfirmationWindow] = useState(false);
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
   };
@@ -343,7 +351,8 @@ export default function GlobalContextProvider({
         isNewNoteObject: { isNewNote, setIsNewNote },
         allTagsObject: { allTags, setAllTags },
         selectedTagObject: { selectedTags, setSelectedTags },
-        selectedLanguageObject: {selectedLanguage, setSelectedLanguage}
+        selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
+        openConfirmationWindowObject: {openConfirmationWindow, setOpenConfirmationWindow}
       }}
     >
       {children}
