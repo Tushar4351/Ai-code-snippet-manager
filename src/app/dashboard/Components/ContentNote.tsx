@@ -124,7 +124,7 @@ const ContentNote = () => {
               darkMode[1].isSelected ? "bg-[#1f1e25] text-white" : ""
             }`}
           >
-            <p>Delete Note</p>
+            <p>Close</p>
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>

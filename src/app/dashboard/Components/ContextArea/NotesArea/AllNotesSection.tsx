@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/ContextApi";
-import PlusIcon from "../../../../../assets/icons/plus.svg";
+import DocumentIcon from "../../../../../assets/icons/document.svg";
 import DeleteIcon from "../../../../../assets/icons/delete.svg";
 import ImportantIcon from "../../../../../assets/icons/important.svg";
 import EditIcon from "../../../../../assets/icons/edit.svg";
@@ -31,12 +31,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import EmptyPlaceHolder from "../../EmptyPlaceHolder";
 
 const AllNotesSection = () => {
   const {
     allNotesObject: { allNotes },
     openContentNoteObject: { openContentNote, setOpenContentNote },
     sideBarMenuObject: { sideBarMenu },
+    darkModeObject: { darkMode },
   } = useGlobalContext();
   //console.log(allNotes);
 
@@ -71,7 +73,7 @@ const AllNotesSection = () => {
     //if important is selected filter important notes
     if (sideBarMenu[1].isSelected) {
       const filteredImportnatNotes = allNotes.filter(
-        (note) => note.isImportant || note.isDeleted
+        (note) => !note.isDeleted && note.isImportant
       );
       setFilteredNotes(filteredImportnatNotes);
       console.log("Important notes filtered ...", filteredNotes);
@@ -93,7 +95,6 @@ const AllNotesSection = () => {
         <>
           {filteredNotes.length != 0 ? (
             <>
-              {" "}
               {filteredNotes.map((note, index) => (
                 <div key={index}>
                   <SingleNote note={note} />
@@ -102,31 +103,43 @@ const AllNotesSection = () => {
             </>
           ) : (
             <>
-              <div className="flex items-center mt-6 text-center rounded-lg h-96 ">
-                <div className="flex flex-col w-full max-w-sm px-4 mx-auto">
-                  <h1 className="mt-3 text-lg text-gray-800 dark:text-white">
-                    No snippets found
-                  </h1>
-                  <p className="mt-2 text-gray-500 dark:text-gray-400">
-                    Create a new snippet.
-                  </p>
-                  <div className="flex items-center justify-center mt-4 sm:mx-auto">
-                    <button className="flex items-center justify-center w-full px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-[#9588e8] hover:bg-[#998edf] rounded-lg gap-x-2">
-                      <PlusIcon/>
-                      <span>Add Snippet</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                <EmptyPlaceHolder Icon={<DocumentIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> It looks like there is no snippets right now</span> } isNew={true} />
             </>
           )}
         </>
       )}
-      {filteredNotes.map((note, index) => (
-        <div key={index}>
-          <SingleNote note={note} />
-        </div>
-      ))}
+
+      {sideBarMenu[1].isSelected && (
+        <>
+          {filteredNotes.length != 0 ? (
+            <>
+              {filteredNotes.map((note, index) => (
+                <div key={index}>
+                  <SingleNote note={note} />
+                </div>
+              ))}
+            </>
+          ) : (
+            <EmptyPlaceHolder Icon={<ImportantIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> Currently, there are no snippets<br/> marked as important</span> } isNew={false} />
+          )}
+        </>
+      )}
+
+      {sideBarMenu[2].isSelected && (
+        <>
+          {filteredNotes.length != 0 ? (
+            <>
+              {filteredNotes.map((note, index) => (
+                <div key={index}>
+                  <SingleNote note={note} />
+                </div>
+              ))}
+            </>
+          ) : (
+            <EmptyPlaceHolder Icon={<DeleteIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> Currently, there are no snippets<br/> marked as deleted</span> } isNew={false} /> 
+          )}
+        </>
+      )}
     </div>
   );
 };

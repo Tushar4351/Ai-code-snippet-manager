@@ -2,7 +2,8 @@ import Image from "next/image";
 import SearchIcon from "../../../../../assets/icons/search.png";
 import PlusIcon from "../../../../../assets/icons/plus.svg";
 import { useGlobalContext } from "@/ContextApi";
-import { v4 as uuidv4 } from "uuid";
+import { openTheContentNote } from "../../EmptyPlaceHolder";
+
 
 const SearchBar = () => {
   const {
@@ -36,44 +37,11 @@ const AddSnippetButton = () => {
     isNewNoteObject: { setIsNewNote },
   } = useGlobalContext();
 
-  function openTheContentNote() {
-    const newSingleNote = {
-      id: uuidv4(),
-      title: "",
-      createdAt: formatDate(new Date()),
-      tags: [],
-      description: "",
-      code: "",
-      isImportant: false,
-      language: "",
-      isDeleted: false
-    };
 
-    setAllNotes([newSingleNote, ...allNotes]);
-    setSelectedNote(newSingleNote);
-    setOpenContentNote(true);
-    setIsNewNote(true);
-  }
-
-  // ... rest of the component
-
-  function formatDate(date: Date) {
-    //format the date to dd month yyyy
-    const options: Intl.DateTimeFormatOptions = {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    };
-    return new Intl.DateTimeFormat("en-US", options).format(date);
-  }
 
   return (
     <div
-      onClick={openTheContentNote}
+      onClick={()=> openTheContentNote(setIsNewNote,setSelectedNote,setOpenContentNote,setAllNotes,allNotes)}
       className="absolute flex gap-2 px-3 rounded-3xl max-md:px-1 bg-black p-1 text-[13px] text-white right-[6px] items-center cursor-pointer select-none"
     >
       <PlusIcon />
