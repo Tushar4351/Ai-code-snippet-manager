@@ -6,7 +6,7 @@ import CopyIcon from "../../../assets/icons/copy.svg";
 import DownArrowIcon from "../../../assets/icons/downarrow.svg";
 import CheckIcon from "../../../assets/icons/check.svg";
 import UpArrowIcon from "../../../assets/icons/uparrow.svg";
-import SearchIcon from "../../../assets/icons/search.png";
+import SearchIcon from "../../../assets/icons/search.svg";
 import {
   Tooltip,
   TooltipContent,
@@ -503,13 +503,7 @@ const CodeBlock = ({
             darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-slate-200"
           } p-1 rounded-md flex gap-1 mb-1`}
         >
-          <Image
-            className="h-6 w-6 mr-1"
-            src={SearchIcon}
-            alt="Search icon"
-            width={20}
-            height={20}
-          />
+          <SearchIcon className="h-6 w-6 mr-1"/>
           <input
             ref={textRef}
             placeholder="Search Language"

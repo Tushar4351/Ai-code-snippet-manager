@@ -1,9 +1,8 @@
 import Image from "next/image";
-import SearchIcon from "../../../../../assets/icons/search.png";
+import SearchIcon from "../../../../../assets/icons/search.svg";
 import PlusIcon from "../../../../../assets/icons/plus.svg";
 import { useGlobalContext } from "@/ContextApi";
 import { openTheContentNote } from "../../EmptyPlaceHolder";
-
 
 const SearchBar = () => {
   const {
@@ -15,7 +14,7 @@ const SearchBar = () => {
         darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-gray-100"
       } rounded-3xl flex items-center gap-2`}
     >
-      <Image src={SearchIcon} alt="Search icon" width={20} height={20} />
+      <SearchIcon className="h-6 w-6 mr-1"/>
       <input
         placeholder="Search a Snippet"
         className={`w-[70%] outline-none text-sm ${
@@ -37,11 +36,17 @@ const AddSnippetButton = () => {
     isNewNoteObject: { setIsNewNote },
   } = useGlobalContext();
 
-
-
   return (
     <div
-      onClick={()=> openTheContentNote(setIsNewNote,setSelectedNote,setOpenContentNote,setAllNotes,allNotes)}
+      onClick={() =>
+        openTheContentNote(
+          setIsNewNote,
+          setSelectedNote,
+          setOpenContentNote,
+          setAllNotes,
+          allNotes
+        )
+      }
       className="absolute flex gap-2 px-3 rounded-3xl max-md:px-1 bg-black p-1 text-[13px] text-white right-[6px] items-center cursor-pointer select-none"
     >
       <PlusIcon />

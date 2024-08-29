@@ -80,8 +80,8 @@ interface GlobalContextType {
     setOpenTagsWindow: React.Dispatch<React.SetStateAction<boolean>>;
   },
   tagsAndLogoutMenuObject: {
-    tagsAndLogoutMenu: ;
-    setTagsAndLogoutMenu: React.Dispatch<React.SetStateAction<boolean>>;
+    tagsAndLogoutMenu: SideBarMenu[] ;
+    setTagsAndLogoutMenu: React.Dispatch<React.SetStateAction<SideBarMenu[]>>;
   }
 }
 const ContextProvider = createContext<GlobalContextType>({
@@ -142,7 +142,7 @@ const ContextProvider = createContext<GlobalContextType>({
     setOpenTagsWindow: () => {},
   },
   tagsAndLogoutMenuObject:{
-    tagsAndLogoutMenu: false,
+    tagsAndLogoutMenu: [],
     setTagsAndLogoutMenu: () => {},
   }
 });
@@ -396,7 +396,13 @@ export default function GlobalContextProvider({
     
     setCodeLanguagesCounter(convertedLanguageCounted);
    
-  },[allNotes])
+  }, [allNotes])
+  
+  useEffect(() => {
+    if (openTagsWindow) {
+      setOpenTagsWindow(false)
+    }
+  },[sideBarMenu])
 
   return (
     <ContextProvider.Provider
