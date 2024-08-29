@@ -4,9 +4,12 @@ import { useContext, createContext, useState, useEffect } from "react";
 import SnippetIcon from "./assets/icons/snippet.svg";
 import ImportantIcon from "./assets/icons/important.svg";
 import DeleteIcon from "./assets/icons/delete.svg";
+import TagsIcon from "./assets/icons/tags.svg";
+import LogoutIcon from "./assets/icons/logout.svg";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
+
 import { StaticImageData } from "next/image";
 
 interface DarkModeType {
@@ -68,6 +71,18 @@ interface GlobalContextType {
     openConfirmationWindow: boolean;
     setOpenConfirmationWindow: React.Dispatch<React.SetStateAction<boolean>>;
   }
+  codeLanguageCOunterObject: {
+    codeLanguagesCounter: CodeLanguageCounterType[];
+    setCodeLanguagesCounter: React.Dispatch<React.SetStateAction<CodeLanguageCounterType[]>>;
+  };
+  openTagsWindowObject: {
+    openTagsWindow: boolean;
+    setOpenTagsWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  },
+  tagsAndLogoutMenuObject: {
+    tagsAndLogoutMenu: ;
+    setTagsAndLogoutMenu: React.Dispatch<React.SetStateAction<boolean>>;
+  }
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -117,6 +132,18 @@ const ContextProvider = createContext<GlobalContextType>({
   openConfirmationWindowObject: {
     openConfirmationWindow: false,
     setOpenConfirmationWindow: () => {},
+  },
+  codeLanguageCOunterObject: {
+    codeLanguagesCounter: [],
+    setCodeLanguagesCounter:() => {},
+  },
+  openTagsWindowObject: {
+    openTagsWindow: false,
+    setOpenTagsWindow: () => {},
+  },
+  tagsAndLogoutMenuObject:{
+    tagsAndLogoutMenu: false,
+    setTagsAndLogoutMenu: () => {},
   }
 });
 
@@ -169,6 +196,21 @@ export default function GlobalContextProvider({
   const [selectedTags, setSelectedTags] = useState<SingleTagType[]>([]);
   const [selectedLanguage, setSelectedLanguage] = useState<SingleCodeLanguageType | null>(null)
   const [openConfirmationWindow, setOpenConfirmationWindow] = useState(false);
+  const [codeLanguagesCounter, setCodeLanguagesCounter] = useState<CodeLanguageCounterType[]>([]);
+  const [openTagsWindow, setOpenTagsWindow] = useState(false);
+  const [tagsAndLogoutMenu, setTagsAndLogoutMenu] = useState<SideBarMenu[]>([{
+    id: 1,
+    name: "Tags",
+    isSelected: false,
+    icon: <TagsIcon className="h-6 w-6 cursor-pointer"/>,
+  },
+    {
+      id: 2,
+      name: "Logout",
+      isSelected: false,
+      icon: <LogoutIcon className="h-6 w-6 cursor-pointer" />,
+      },
+  ])
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
   };
@@ -336,7 +378,25 @@ export default function GlobalContextProvider({
       );
     });
     setAllNotes(filteredNotes);
-    }, [openContentNote]);
+  }, [openContentNote]);
+  
+  useEffect(() => {
+    const languageCounts: Record<string, number> = {}
+    allNotes.forEach(note => {
+      const language = note.language.toLowerCase();
+      if (languageCounts[language]) {
+        languageCounts[language]++;
+      } else {
+        languageCounts[language] = 1;
+      }
+    });
+    const convertedLanguageCounted: CodeLanguageCounterType[] = Object.entries(languageCounts)
+      .map(([language, count]) => ({ language, count }))
+      .sort((a, b) => b.count - a.count);
+    
+    setCodeLanguagesCounter(convertedLanguageCounted);
+   
+  },[allNotes])
 
   return (
     <ContextProvider.Provider
@@ -352,7 +412,10 @@ export default function GlobalContextProvider({
         allTagsObject: { allTags, setAllTags },
         selectedTagObject: { selectedTags, setSelectedTags },
         selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
-        openConfirmationWindowObject: {openConfirmationWindow, setOpenConfirmationWindow}
+        openConfirmationWindowObject: { openConfirmationWindow, setOpenConfirmationWindow },
+        codeLanguageCOunterObject: {codeLanguagesCounter, setCodeLanguagesCounter},
+        openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
+        tagsAndLogoutMenuObject :{tagsAndLogoutMenu, setTagsAndLogoutMenu},
       }}
     >
       {children}

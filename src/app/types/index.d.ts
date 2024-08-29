@@ -48,3 +48,7 @@ interface SingleCodeLanguageType {
   name: string;
   icon: React.ReactNode;
 }
+interface CodeLanguageCounterType {
+  language: string;
+  count: number;
+}
