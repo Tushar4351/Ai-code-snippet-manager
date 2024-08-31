@@ -1,8 +1,9 @@
 "use client";
 import Image from "next/image";
-import logoImage from "../../../assets/images/logosaas.png";
+import logoImage from "../../../../assets/images/logosaas.png";
 import { useGlobalContext } from "@/ContextApi";
 import { getLanguageIcon } from "@/app/localData/LanguageTextToIcon";
+import TagsWindow from "../ContentArea/TagsWIndow/TagsWindow";
 
 const Sidebar = () => {
   const {
@@ -13,6 +14,8 @@ const Sidebar = () => {
       codeLanguagesCounter,
       setCodeLanguagesCounter,
     },
+    tagsAndLogoutMenuObject: { tagsAndLogoutMenu, setTagsAndLogoutMenu },
+    openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
   } = useGlobalContext();
   // console.log(sideBarMenu);
   // console.log("sidebar:", darkMode);
@@ -27,6 +30,25 @@ const Sidebar = () => {
     });
     setSideBarMenu(updatedSideBarMenu);
   }
+  const clickedTagsMenu = (index: number) => {
+    const updatedMenu = tagsAndLogoutMenu.map((item, i) => ({
+      ...item,
+      isSelected: i === index,
+    }));
+
+    //setTagsAndLogoutMenu(updatedMenu);
+    console.log(updatedMenu[index].name);
+    if (updatedMenu[index].name === "Tags") {
+      setOpenTagsWindow(true);
+    } else if (updatedMenu[index].name === "Log Out") {
+      handleLogout();
+    }
+  };
+
+  const handleLogout = () => {
+    // Implement your logout logic here
+    console.log("Logging out...");
+  };
 
   return (
     <aside
@@ -85,6 +107,26 @@ const Sidebar = () => {
             </li>
           ))}
         </ul>
+        <ul className="grid gap-2">
+          {tagsAndLogoutMenu.map((link, index) => (
+
+            <li
+              key={index}
+              onClick={() => clickedTagsMenu(index)}
+              className={`flex items-center gap-2 px-3 pr-10 py-2 ${
+                link.isSelected ? "bg-[#9588e8] text-white" : "text-black"
+              } hover:bg-[#9588e8] w-full rounded-lg`}
+            >
+              {link.icon}
+              <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>
+                {link.name}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {openTagsWindow && <TagsWindow/>}
+
       </nav>
       <div className="mt-10 space-y-4">
         {codeLanguagesCounter.length > 0 && (

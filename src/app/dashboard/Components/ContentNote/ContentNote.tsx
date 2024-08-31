@@ -1,12 +1,12 @@
 import { useGlobalContext } from "@/ContextApi";
 import React, { useEffect, useRef, useState } from "react";
-import CloseIcon from "../../../assets/icons/close.svg";
-import EditSectionIcon from "../../../assets/icons/editsection.svg";
-import CopyIcon from "../../../assets/icons/copy.svg";
-import DownArrowIcon from "../../../assets/icons/downarrow.svg";
-import CheckIcon from "../../../assets/icons/check.svg";
-import UpArrowIcon from "../../../assets/icons/uparrow.svg";
-import SearchIcon from "../../../assets/icons/search.svg";
+import CloseIcon from "../../../../assets/icons/close.svg";
+import EditSectionIcon from "../../../../assets/icons/editsection.svg";
+import CopyIcon from "../../../../assets/icons/copy.svg";
+import DownArrowIcon from "../../../../assets/icons/downarrow.svg";
+import CheckIcon from "../../../../assets/icons/check.svg";
+import UpArrowIcon from "../../../../assets/icons/uparrow.svg";
+import SearchIcon from "../../../../assets/icons/search.svg";
 import {
   Tooltip,
   TooltipContent,

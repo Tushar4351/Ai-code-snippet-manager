@@ -5,7 +5,7 @@ import SearchBar from "./TopBar/SearchBar";
 import SideBarMenuIcon from "./TopBar/SideBarMenuIcon";
 import SwiperSelection from "./NotesArea/SwiperSelection";
 import AllNotesSection from "./NotesArea/AllNotesSection";
-import ContentNote from "../ContentNote";
+import ContentNote from "../ContentNote/ContentNote";
 
 const ContextArea = () => {
   const {

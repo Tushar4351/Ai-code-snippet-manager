@@ -65,24 +65,38 @@ interface GlobalContextType {
   };
   selectedLanguageObject: {
     selectedLanguage: SingleCodeLanguageType | null;
-    setSelectedLanguage: React.Dispatch<React.SetStateAction<SingleCodeLanguageType | null>>;
-  }
+    setSelectedLanguage: React.Dispatch<
+      React.SetStateAction<SingleCodeLanguageType | null>
+    >;
+  };
   openConfirmationWindowObject: {
     openConfirmationWindow: boolean;
     setOpenConfirmationWindow: React.Dispatch<React.SetStateAction<boolean>>;
-  }
+  };
   codeLanguageCOunterObject: {
     codeLanguagesCounter: CodeLanguageCounterType[];
-    setCodeLanguagesCounter: React.Dispatch<React.SetStateAction<CodeLanguageCounterType[]>>;
+    setCodeLanguagesCounter: React.Dispatch<
+      React.SetStateAction<CodeLanguageCounterType[]>
+    >;
   };
   openTagsWindowObject: {
     openTagsWindow: boolean;
     setOpenTagsWindow: React.Dispatch<React.SetStateAction<boolean>>;
-  },
+  };
   tagsAndLogoutMenuObject: {
-    tagsAndLogoutMenu: SideBarMenu[] ;
+    tagsAndLogoutMenu: SideBarMenu[];
     setTagsAndLogoutMenu: React.Dispatch<React.SetStateAction<SideBarMenu[]>>;
-  }
+  };
+  openNewTagsWindowObject: {
+    openNewTagsWindow: boolean;
+    setOpenNewTagsWindow: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  selectedTagToEditObject: {
+    selectedTagToEdit: SingleTagType | null;
+    setSelectedTagToEdit: React.Dispatch<
+      React.SetStateAction<SingleTagType | null>
+    >;
+  };
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -135,16 +149,24 @@ const ContextProvider = createContext<GlobalContextType>({
   },
   codeLanguageCOunterObject: {
     codeLanguagesCounter: [],
-    setCodeLanguagesCounter:() => {},
+    setCodeLanguagesCounter: () => {},
   },
   openTagsWindowObject: {
     openTagsWindow: false,
     setOpenTagsWindow: () => {},
   },
-  tagsAndLogoutMenuObject:{
+  tagsAndLogoutMenuObject: {
     tagsAndLogoutMenu: [],
     setTagsAndLogoutMenu: () => {},
-  }
+  },
+  openNewTagsWindowObject: {
+    openNewTagsWindow: false,
+    setOpenNewTagsWindow: () => {},
+  },
+  selectedTagToEditObject: {
+    selectedTagToEdit: null,
+    setSelectedTagToEdit: () => {},
+  },
 });
 
 export default function GlobalContextProvider({
@@ -157,19 +179,19 @@ export default function GlobalContextProvider({
       id: 1,
       name: "Snippets",
       isSelected: true,
-      icon: <SnippetIcon className="h-6 w-6 cursor-pointer"/>,
+      icon: <SnippetIcon className="h-6 w-6 cursor-pointer" />,
     },
     {
       id: 2,
       name: "Important",
       isSelected: false,
-      icon:  <ImportantIcon className="h-6 w-6 cursor-pointer"/>,
+      icon: <ImportantIcon className="h-6 w-6 cursor-pointer" />,
     },
     {
       id: 3,
       name: "Delete",
       isSelected: false,
-      icon: <DeleteIcon className="w-6 h-6 cursor-pointer"/>,
+      icon: <DeleteIcon className="w-6 h-6 cursor-pointer" />,
     },
   ]);
   const [darkMode, setDarkMode] = useState<DarkModeType[]>([
@@ -194,23 +216,31 @@ export default function GlobalContextProvider({
   const [selectedNote, setSelectedNote] = useState<SingleNoteType | null>(null);
   const [isNewNote, setIsNewNote] = useState(false);
   const [selectedTags, setSelectedTags] = useState<SingleTagType[]>([]);
-  const [selectedLanguage, setSelectedLanguage] = useState<SingleCodeLanguageType | null>(null)
+  const [selectedLanguage, setSelectedLanguage] =
+    useState<SingleCodeLanguageType | null>(null);
   const [openConfirmationWindow, setOpenConfirmationWindow] = useState(false);
-  const [codeLanguagesCounter, setCodeLanguagesCounter] = useState<CodeLanguageCounterType[]>([]);
+  const [codeLanguagesCounter, setCodeLanguagesCounter] = useState<
+    CodeLanguageCounterType[]
+  >([]);
   const [openTagsWindow, setOpenTagsWindow] = useState(false);
-  const [tagsAndLogoutMenu, setTagsAndLogoutMenu] = useState<SideBarMenu[]>([{
-    id: 1,
-    name: "Tags",
-    isSelected: false,
-    icon: <TagsIcon className="h-6 w-6 cursor-pointer"/>,
-  },
+  const [tagsAndLogoutMenu, setTagsAndLogoutMenu] = useState<SideBarMenu[]>([
+    {
+      id: 1,
+      name: "Tags",
+      isSelected: false,
+      icon: <TagsIcon className="h-6 w-6 cursor-pointer" />,
+    },
     {
       id: 2,
-      name: "Logout",
+      name: "Log Out",
       isSelected: false,
       icon: <LogoutIcon className="h-6 w-6 cursor-pointer" />,
-      },
-  ])
+    },
+  ]);
+  const [openNewTagsWindow, setOpenNewTagsWindow] = useState(false);
+  const [selectedTagToEdit, setSelectedTagToEdit] =
+    useState<SingleTagType | null>(null);
+
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
   };
@@ -226,16 +256,17 @@ export default function GlobalContextProvider({
     function updateAllNotes() {
       const allNotes = [
         {
-            id: uuidv4(),
-            title: "Introduction to JavaScript",
-            isImportant: true,
-            tags: [
-                { id: uuidv4(), name: "tag1" },
-                { id: uuidv4(), name: "tag2" },
-                { id: uuidv4(), name: "tag3" },
-            ],
-            description: "A basic introduction to JavaScript programming language.",
-            code: `
+          id: uuidv4(),
+          title: "Introduction to JavaScript",
+          isImportant: true,
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description:
+            "A basic introduction to JavaScript programming language.",
+          code: `
     import React from "react";
                 
     function HelloWorld() {
@@ -244,21 +275,21 @@ export default function GlobalContextProvider({
                 
     export default HelloWorld;
             `,
-            language: "JavaScript",
-            createdAt: "2023-07-01T10:00:00Z",
-            isDeleted: false
+          language: "JavaScript",
+          createdAt: "2023-07-01T10:00:00Z",
+          isDeleted: false,
         },
         {
-            id: uuidv4(),
-            title: "JavaScript for Data Science",
-            isImportant: false,
-            tags: [
-                { id: uuidv4(), name: "tag1" },
-                { id: uuidv4(), name: "tag2" },
-                { id: uuidv4(), name: "tag3" },
-            ],
-            description: "Using JavaScript for data science with React.",
-            code: `
+          id: uuidv4(),
+          title: "JavaScript for Data Science",
+          isImportant: false,
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description: "Using JavaScript for data science with React.",
+          code: `
     import React from "react";
                 
     function HelloWorld() {
@@ -267,21 +298,22 @@ export default function GlobalContextProvider({
                 
     export default HelloWorld;
             `,
-            language: "JavaScript",
-            createdAt: "2023-07-02T14:30:00Z",
-            isDeleted: false
+          language: "JavaScript",
+          createdAt: "2023-07-02T14:30:00Z",
+          isDeleted: false,
         },
         {
-            id: uuidv4(),
-            title: "JavaScript Flexbox Layout",
-            isImportant: true,
-            tags: [
-                { id: uuidv4(), name: "tag1" },
-                { id: uuidv4(), name: "tag2" },
-                { id: uuidv4(), name: "tag3" },
-            ],
-            description: "A guide to CSS Flexbox layout using JavaScript and React.",
-            code: `
+          id: uuidv4(),
+          title: "JavaScript Flexbox Layout",
+          isImportant: true,
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description:
+            "A guide to CSS Flexbox layout using JavaScript and React.",
+          code: `
     import React from "react";
                 
     function HelloWorld() {
@@ -290,21 +322,21 @@ export default function GlobalContextProvider({
                 
     export default HelloWorld;
             `,
-            language: "JavaScript",
-            createdAt: "2023-07-03T09:00:00Z",
-            isDeleted: false
+          language: "JavaScript",
+          createdAt: "2023-07-03T09:00:00Z",
+          isDeleted: false,
         },
         {
-            id: uuidv4(),
-            title: "JavaScript Basics",
-            isImportant: false,
-            tags: [
-                { id: uuidv4(), name: "tag1" },
-                { id: uuidv4(), name: "tag2" },
-                { id: uuidv4(), name: "tag3" },
-            ],
-            description: "Basic JavaScript concepts for beginners using React.",
-            code: `
+          id: uuidv4(),
+          title: "JavaScript Basics",
+          isImportant: false,
+          tags: [
+            { id: uuidv4(), name: "tag1" },
+            { id: uuidv4(), name: "tag2" },
+            { id: uuidv4(), name: "tag3" },
+          ],
+          description: "Basic JavaScript concepts for beginners using React.",
+          code: `
     import React from "react";
                 
     function HelloWorld() {
@@ -313,12 +345,11 @@ export default function GlobalContextProvider({
                 
     export default HelloWorld;
             `,
-            language: "JavaScript",
-            createdAt: "2023-07-04T12:15:00Z",
-            isDeleted: false
+          language: "JavaScript",
+          createdAt: "2023-07-04T12:15:00Z",
+          isDeleted: false,
         },
-    ];
-    
+      ];
 
       setTimeout(() => {
         setAllNotes(allNotes);
@@ -328,7 +359,7 @@ export default function GlobalContextProvider({
       const allTags = [
         {
           id: uuidv4(),
-          name: "tag1",
+          name: "All",
         },
         {
           id: uuidv4(),
@@ -368,7 +399,6 @@ export default function GlobalContextProvider({
   //this useeffect will check the title and the description and the code are empty.if yes it will be removed from the alll noted array to avoid havving empty notes
   useEffect(() => {
     if (openContentNote === false) {
-      
     }
     const filteredNotes = allNotes.filter((note) => {
       return (
@@ -379,10 +409,10 @@ export default function GlobalContextProvider({
     });
     setAllNotes(filteredNotes);
   }, [openContentNote]);
-  
+
   useEffect(() => {
-    const languageCounts: Record<string, number> = {}
-    allNotes.forEach(note => {
+    const languageCounts: Record<string, number> = {};
+    allNotes.forEach((note) => {
       const language = note.language.toLowerCase();
       if (languageCounts[language]) {
         languageCounts[language]++;
@@ -390,19 +420,20 @@ export default function GlobalContextProvider({
         languageCounts[language] = 1;
       }
     });
-    const convertedLanguageCounted: CodeLanguageCounterType[] = Object.entries(languageCounts)
+    const convertedLanguageCounted: CodeLanguageCounterType[] = Object.entries(
+      languageCounts
+    )
       .map(([language, count]) => ({ language, count }))
       .sort((a, b) => b.count - a.count);
-    
+
     setCodeLanguagesCounter(convertedLanguageCounted);
-   
-  }, [allNotes])
-  
+  }, [allNotes]);
+
   useEffect(() => {
     if (openTagsWindow) {
-      setOpenTagsWindow(false)
+      setOpenTagsWindow(false);
     }
-  },[sideBarMenu])
+  }, [sideBarMenu]);
 
   return (
     <ContextProvider.Provider
@@ -418,10 +449,18 @@ export default function GlobalContextProvider({
         allTagsObject: { allTags, setAllTags },
         selectedTagObject: { selectedTags, setSelectedTags },
         selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
-        openConfirmationWindowObject: { openConfirmationWindow, setOpenConfirmationWindow },
-        codeLanguageCOunterObject: {codeLanguagesCounter, setCodeLanguagesCounter},
+        openConfirmationWindowObject: {
+          openConfirmationWindow,
+          setOpenConfirmationWindow,
+        },
+        codeLanguageCOunterObject: {
+          codeLanguagesCounter,
+          setCodeLanguagesCounter,
+        },
         openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
-        tagsAndLogoutMenuObject :{tagsAndLogoutMenu, setTagsAndLogoutMenu},
+        tagsAndLogoutMenuObject: { tagsAndLogoutMenu, setTagsAndLogoutMenu },
+        openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
+        selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
       }}
     >
       {children}
