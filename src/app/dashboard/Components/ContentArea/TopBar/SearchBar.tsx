@@ -7,6 +7,7 @@ import { openTheContentNote } from "../../EmptyPlaceHolder";
 const SearchBar = () => {
   const {
     darkModeObject: { darkMode },
+    
   } = useGlobalContext();
   return (
     <div
@@ -34,6 +35,7 @@ const AddSnippetButton = () => {
     allNotesObject: { allNotes, setAllNotes },
     selectedNoteObject: { setSelectedNote },
     isNewNoteObject: { setIsNewNote },
+    sharedUserIdObject:{sharedUserId, setSharedUserId}
   } = useGlobalContext();
 
   return (
@@ -44,7 +46,8 @@ const AddSnippetButton = () => {
           setSelectedNote,
           setOpenContentNote,
           setAllNotes,
-          allNotes
+          allNotes,
+          sharedUserId
         )
       }
       className="absolute flex gap-2 px-3 rounded-3xl max-md:px-1 bg-black p-1 text-[13px] text-white right-[6px] items-center cursor-pointer select-none"

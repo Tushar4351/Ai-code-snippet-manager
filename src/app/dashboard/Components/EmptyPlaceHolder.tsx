@@ -10,20 +10,33 @@ const EmptyPlaceHolder = ({
   Icon: React.ReactNode;
   Text: React.ReactNode;
   isNew?: boolean;
-    }) => {
-        const {
-            openContentNoteObject: { setOpenContentNote },
-            allNotesObject: { allNotes, setAllNotes },
-            selectedNoteObject: { setSelectedNote },
-            isNewNoteObject: { setIsNewNote },
-          } = useGlobalContext();
-        
+}) => {
+  const {
+    openContentNoteObject: { setOpenContentNote },
+    allNotesObject: { allNotes, setAllNotes },
+    selectedNoteObject: { setSelectedNote },
+    isNewNoteObject: { setIsNewNote },
+    sharedUserIdObject:{sharedUserId, setSharedUserId}
+  } = useGlobalContext();
+
   return (
     <div className="w-full h-1/2 pt-20 flex gap-3 flex-col items-center">
       {Icon}
       {Text}
       {isNew && (
-        <Button className="bg-[#9588e8] hover:bg-[#a49ae4]"   onClick={()=> openTheContentNote(setIsNewNote,setSelectedNote,setOpenContentNote,setAllNotes,allNotes)}>
+        <Button
+          className="bg-[#9588e8] hover:bg-[#a49ae4]"
+          onClick={() =>
+            openTheContentNote(
+              setIsNewNote,
+              setSelectedNote,
+              setOpenContentNote,
+              setAllNotes,
+              allNotes,
+              sharedUserId
+            )
+          }
+        >
           {" "}
           <PlusIcon />
           Add a new Snippet
@@ -39,11 +52,13 @@ export function openTheContentNote(
   setIsNewNote: React.Dispatch<React.SetStateAction<boolean>>,
   setSelectedNote: React.Dispatch<React.SetStateAction<SingleNoteType | null>>,
   setOpenContentNote: React.Dispatch<React.SetStateAction<boolean>>,
-    setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>,
-  allNotes:SingleNoteType[]
+  setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>,
+  allNotes: SingleNoteType[],
+  sharedUserId: string
 ) {
   const newSingleNote = {
     id: uuidv4(),
+    clerkUsId: sharedUserId || "",
     title: "",
     createdAt: formatDate(new Date()),
     tags: [],

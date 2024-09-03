@@ -11,6 +11,7 @@ import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
 
 import { StaticImageData } from "next/image";
+import { useUser } from "@clerk/nextjs";
 
 interface DarkModeType {
   id: number;
@@ -97,6 +98,18 @@ interface GlobalContextType {
       React.SetStateAction<SingleTagType | null>
     >;
   };
+  tagsClickedObject: {
+    tagsClicked: string[];
+    setTagsClicked: React.Dispatch<React.SetStateAction<string[]>>;
+  };
+  isLoadingObject: {
+    isLoading: boolean;
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  };
+  sharedUserIdObject: {
+    sharedUserId: string;
+    setSharedUserId: React.Dispatch<React.SetStateAction<string>>;
+  };
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -166,6 +179,18 @@ const ContextProvider = createContext<GlobalContextType>({
   selectedTagToEditObject: {
     selectedTagToEdit: null,
     setSelectedTagToEdit: () => {},
+  },
+  tagsClickedObject: {
+    tagsClicked: [],
+    setTagsClicked: () => {},
+  },
+  isLoadingObject: {
+    isLoading: true,
+    setIsLoading: () => {},
+  },
+  sharedUserIdObject: {
+    sharedUserId: "",
+    setSharedUserId: () => {},
   },
 });
 
@@ -240,10 +265,20 @@ export default function GlobalContextProvider({
   const [openNewTagsWindow, setOpenNewTagsWindow] = useState(false);
   const [selectedTagToEdit, setSelectedTagToEdit] =
     useState<SingleTagType | null>(null);
+  const [tagsClicked, setTagsClicked] = useState<string[]>([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+  const { isLoaded, user } = useUser();
+  const [sharedUserId, setSharedUserId] = useState<string>("");
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
   };
+  useEffect(() => {
+    if (user) {
+      setSharedUserId(user?.id);
+    }
+  }, [isLoaded, user]);
+
   useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
@@ -461,6 +496,9 @@ export default function GlobalContextProvider({
         tagsAndLogoutMenuObject: { tagsAndLogoutMenu, setTagsAndLogoutMenu },
         openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
         selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
+        tagsClickedObject: { tagsClicked, setTagsClicked },
+        isLoadingObject: { isLoading, setIsLoading },
+        sharedUserIdObject: { sharedUserId, setSharedUserId },
       }}
     >
       {children}

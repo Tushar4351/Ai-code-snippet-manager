@@ -19,9 +19,10 @@ const AddTagWindow = () => {
   const {
     darkModeObject: { darkMode },
     allTagsObject: { allTags, setAllTags },
-    allNotesObject: { allNotes,setAllNotes },
+    allNotesObject: { allNotes, setAllNotes },
     selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
+    sharedUserIdObject:{sharedUserId, setSharedUserId}
   } = useGlobalContext();
 
   const [tagName, setTagName] = useState("");
@@ -51,7 +52,7 @@ const AddTagWindow = () => {
     }
     if (!allTags.some((tag) => tag.name === tagName)) {
       if (!selectedTagToEdit) {
-        addNewTagFunction(allTags, setAllTags, setOpenNewTagsWindow, tagName);
+        addNewTagFunction(allTags, setAllTags, setOpenNewTagsWindow, tagName,sharedUserId);
       } else {
         handleEditTag(
           allTags,
@@ -137,10 +138,12 @@ function addNewTagFunction(
   allTags: SingleTagType[],
   setAllTags: (value: React.SetStateAction<SingleTagType[]>) => void,
   setOpenNewTagsWindow: (value: React.SetStateAction<boolean>) => void,
-  tagName: string
+  tagName: string,
+  sharedUserId: string
 ) {
   const newTag = {
     id: uuidv4(),
+    clerkUsId: sharedUserId || "",
     name: tagName,
   };
   try {
@@ -152,4 +155,47 @@ function addNewTagFunction(
   } catch (error) {
     console.log(error);
   }
+}
+function handleEditTag(
+  allTags: SingleTagType[],
+  setAllTags: (value: React.SetStateAction<SingleTagType[]>) => void,
+  setOpenNewTagsWindow: (value: React.SetStateAction<boolean>) => void,
+  selectedTagToEdit: SingleTagType,
+  setSelectedTagToEdit: (
+    value: React.SetStateAction<SingleTagType | null>
+  ) => void,
+  tagName: string,
+  allNotes: SingleNoteType[],
+  setAllNotes: (value: React.SetStateAction<SingleNoteType[]>) => void
+) {
+  // Update all tags
+  const updateAllTags = allTags.map((tag) =>
+    tag.id === selectedTagToEdit?.id ? { ...tag, name: tagName } : tag
+  );
+
+  // Update all notes with the new tag name
+  const updatedNotes = allNotes.map((note) => {
+    if (
+      note.tags.some(
+        (tag) =>
+          tag.name.toLowerCase() === selectedTagToEdit?.name.toLowerCase()
+      )
+    ) {
+      return {
+        ...note,
+        tags: note.tags.map((tag) =>
+          tag.name.toLowerCase() === selectedTagToEdit?.name.toLowerCase()
+            ? { ...tag, name: tagName }
+            : tag
+        ),
+      };
+    }
+    return note;
+  });
+
+  // Update state
+  setAllTags(updateAllTags);
+  setAllNotes(updatedNotes);
+  setSelectedTagToEdit(null);
+  setOpenNewTagsWindow(false);
 }

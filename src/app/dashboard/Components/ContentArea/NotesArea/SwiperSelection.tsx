@@ -18,8 +18,36 @@ export default function SwiperSelection() {
     darkModeObject: { darkMode },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
     allTagsObject: { allTags, setAllTags },
+    tagsClickedObject: { tagsClicked, setTagsClicked },
+    sideBarMenuObject: { sideBarMenu },
+    isLoadingObject: { isLoading, setIsLoading },
   } = useGlobalContext();
   const [tagsSelected, setTagsSelected] = useState<boolean[]>([]);
+
+  useEffect(() => {
+    setTagsClicked((prevTagsClicked) => {
+      const newTagsClicked = allTags.reduce(
+        (acc, tag, index) => {
+          if (tagsSelected[index]) {
+            if (!prevTagsClicked.includes(tag.name)) {
+              acc.push(tag.name);
+            }
+          } else {
+            if (prevTagsClicked.includes(tag.name)) {
+              const tagIndex = acc.indexOf(tag.name);
+              if (tagIndex !== -1) {
+                acc.splice(tagIndex, 1);
+              }
+            }
+          }
+          return acc;
+        },
+        [...prevTagsClicked]
+      );
+      return newTagsClicked;
+    });
+  }, [tagsSelected]);
+  console.log(tagsClicked);
 
   useEffect(() => {
     if (allTags) {
@@ -28,6 +56,15 @@ export default function SwiperSelection() {
       setTagsSelected(newTagsSelected);
     }
   }, [allTags]);
+  useEffect(() => {
+    if (sideBarMenu) {
+      const newTagsSelected = Array(allTags.length).fill(false);
+      const newTagsClicked = ["All"];
+      newTagsSelected[0] = true;
+      setTagsClicked(newTagsClicked);
+      setTagsSelected(newTagsSelected);
+    }
+  }, [sideBarMenu]);
 
   const handleTagClick = (index: number) => {
     const newTagsSelected = [...tagsSelected];
@@ -64,30 +101,38 @@ export default function SwiperSelection() {
         } p-3 rounded-lg flex gap-5`}
       >
         <div className="overflow-x-auto w-full">
-          <Swiper
-            slidesPerView="auto"
-            spaceBetween={10}
-            freeMode={true}
-            pagination={{
-              clickable: true,
-            }}
-            modules={[FreeMode]}
-            className="mySwiper"
-          >
-            {allTags.map((tag, index) => (
-              <SwiperSlide
-                key={index}
-                className={`${
-                  tagsSelected[index]
-                    ? "bg-[#9588e8] text-white"
-                    : "bg-white text-gray-400"
-                } p-1 rounded-md w-20`}
-                onClick={() => handleTagClick(index)}
-              >
-                {tag.name}
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          {isLoading ? (
+            <div className="flex gap-3 items-center mt-[2px]">
+              <div className="w-[80px] h-[30px] bg-slate-100 rounded-md"></div>{" "}
+              <div className="w-[80px] h-[30px] bg-slate-100 rounded-md"></div>{" "}
+              <div className="w-[80px] h-[30px] bg-slate-100 rounded-md"></div>{" "}
+            </div>
+          ) : (
+            <Swiper
+              slidesPerView="auto"
+              spaceBetween={10}
+              freeMode={true}
+              pagination={{
+                clickable: true,
+              }}
+              modules={[FreeMode]}
+              className="mySwiper"
+            >
+              {allTags.map((tag, index) => (
+                <SwiperSlide
+                  key={index}
+                  className={`${
+                    tagsSelected[index]
+                      ? "bg-[#9588e8] text-white"
+                      : "bg-white text-gray-400"
+                  } p-1 rounded-md w-20`}
+                  onClick={() => handleTagClick(index)}
+                >
+                  {tag.name}
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
         <button
           onClick={() => setOpenNewTagsWindow(true)}

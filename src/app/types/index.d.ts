@@ -1,5 +1,3 @@
-
-
 /* eslint-disable no-unused-vars */
 
 // ====== USER PARAMS
@@ -29,10 +27,12 @@ interface SideBarMenu {
 
 interface SingleTagType {
   id: string;
+  clerkUsId: string;
   name: string;
 }
 interface SingleNoteType {
   id: string;
+  clerkUsId: string;
   title: string;
   isImportant: boolean;
   tags: SingleTagType[];

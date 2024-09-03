@@ -8,11 +8,16 @@ import EditIcon from "../../../../../assets/icons/edit.svg";
 import DragIcon from "../../../../../assets/icons/drag.svg";
 import { Button } from "@/components/ui/button";
 import AddTagWindow from "./AddTagWindow";
+import { toast } from "@/components/ui/use-toast";
+import EmptyPlaceHolder from "../../EmptyPlaceHolder";
+import { useEffect, useRef, useState } from "react";
+import { Tags } from "lucide-react";
 
 const TagsWindow = () => {
   const {
     openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
   } = useGlobalContext();
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div
@@ -29,8 +34,8 @@ const TagsWindow = () => {
       } border m-20 w-1/2 z-50 p-4 bg-white shadow-md rounded-md`}
     >
       <Header />
-      <SearchBar />
-      <TagsList />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <TagsList searchQuery={searchQuery} />
     </div>
   );
 };
@@ -45,7 +50,7 @@ const Header = () => {
     <div className="flex justify-between items-center ">
       {" "}
       <div className="flex items-center gap-2">
-        <TagsIcon className="h-7 w-7 mr-1" />{" "}
+        <TagsIcon className="h-7 w-7 mr-1" />
         <span className="text-md font-bold">Tags</span>
       </div>{" "}
       <div>
@@ -58,17 +63,33 @@ const Header = () => {
   );
 };
 
-function SearchBar() {
+function SearchBar({
+  searchQuery,
+  setSearchQuery,
+}: {
+  searchQuery: string;
+  setSearchQuery: React.Dispatch<React.SetStateAction<string>>;
+}) {
   const {
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
+    openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
   } = useGlobalContext();
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [openTagsWindow]);
   return (
     <div className="flex gap-5 items-center justify-between mt-11">
       <div className="h-[42px] flex items-center text-sm rounded-md bg-slate-50 pl-3 gap-1 w-[85%]">
         <SearchIcon className="text-slate-400 h-6 w-6 mr-1" />
         <input
+          ref={inputRef}
+          value={searchQuery}
           placeholder="Search a tag..."
           className="bg-transparent outline-none w-full font-light"
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
       <Button
@@ -83,16 +104,38 @@ function SearchBar() {
   );
 }
 
-function TagsList() {
+function TagsList({ searchQuery }: { searchQuery: string }) {
   const {
     darkModeObject: { darkMode },
     allTagsObject: { allTags, setAllTags },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
   } = useGlobalContext();
 
+  const filterAllItemsFromAllTags = allTags.filter((tag) => tag.name != "All");
+
+  const filterAllTagsBasedOnSearchQuery = filterAllItemsFromAllTags.filter(
+    (tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   return (
     <div className="rounded-md p-4 bg-slate-50 h-[380px] overflow-auto mt-9 flex flex-col gap-4">
-      {allTags.map((tag, index) => (
+      {filterAllItemsFromAllTags.length === 0 && (
+        <EmptyPlaceHolder
+          Icon={<TagsIcon className="h-20 w-20 mr-1" />}
+          Text={
+            <span className="text-slate-400">No Tags has been created Yet</span>
+          }
+        />
+      )}
+
+      {filterAllTagsBasedOnSearchQuery.length === 0 &&
+        filterAllItemsFromAllTags.length !== 0 && (
+          <EmptyPlaceHolder
+            Icon={<TagsIcon className="h-20 w-20 mr-1" />}
+            Text={<span className="text-slate-400">No Tags Found</span>}
+          />
+        )}
+
+      {filterAllTagsBasedOnSearchQuery.map((tag, index) => (
         <div key={index}>
           <SingleTag tag={tag} />
         </div>
@@ -104,12 +147,23 @@ function TagsList() {
 function SingleTag({ tag }: { tag: SingleTagType }) {
   const {
     darkModeObject: { darkMode },
+    allTagsObject: { allTags, setAllTags },
+    allNotesObject: { allNotes, setAllNotes },
     selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
+    tagsClickedObject: { tagsClicked, setTagsClicked },
   } = useGlobalContext();
   function openTagWindow(tag: SingleTagType) {
     setOpenNewTagsWindow(true);
     setSelectedTagToEdit(tag);
+  }
+
+  function countTagInAllNotes(tag: SingleTagType) {
+    let count = 0;
+    allNotes.forEach((note) => {
+      if (note.tags.some((t) => t.name === tag.name)) count++;
+    });
+    return count;
   }
 
   return (
@@ -119,20 +173,80 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
         <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
         <div className="flex flex-col">
           <span className="font-bold">{tag.name}</span>
-          <span className="text-slate-400 text-[12px]">2 Snippets</span>
+          <span className="text-slate-400 text-[12px]">
+            {countTagInAllNotes(tag)} snippets
+          </span>
         </div>
       </div>
       <div className="flex gap-2 items-center">
         <div className="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer bg-slate-200 hover:bg-slate-300">
           <EditIcon
             className="text-slate-400 h-5 w-5"
-            onClick={()=>openTagWindow(tag)}
+            onClick={() => openTagWindow(tag)}
           />
         </div>
-        <div className="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer bg-slate-200 hover:bg-slate-300">
+        <div
+          className="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer bg-slate-200 hover:bg-slate-300"
+          onClick={() =>
+            deleteTag(
+              tag,
+              allTags,
+              setAllTags,
+              allNotes,
+              setAllNotes,
+              tagsClicked,
+              setTagsClicked
+            )
+          }
+        >
           <DeleteIcon className="text-slate-400 h-5 w-5" />
         </div>
       </div>
     </div>
   );
+}
+
+function deleteTag(
+  tag: SingleTagType,
+  allTags: SingleTagType[],
+  setAllTags: React.Dispatch<React.SetStateAction<SingleTagType[]>>,
+  allNotes: SingleNoteType[],
+  setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>,
+  tagsClicked: string[],
+  setTagsClicked: React.Dispatch<React.SetStateAction<string[]>>
+) {
+  setTagsClicked(
+    tagsClicked.filter(
+      (t) => t.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
+    )
+  );
+  try {
+    //Delete tag from allTags
+    const updateAllTags = allTags.filter(
+      (t) => t.name.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
+    );
+    //Delete the tag found in each note and update from all Notes
+    const updateAllNotes = allNotes.map((note) => {
+      if (
+        note.tags.some(
+          (t) => t.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase()
+        )
+      ) {
+        return {
+          ...note,
+          tags: note.tags.filter(
+            (t) => t.name.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
+          ),
+        };
+      }
+      return note;
+    });
+    toast({
+      title: "Tag has been Deleted Successfully",
+    });
+    setAllTags(updateAllTags);
+    setAllNotes(updateAllNotes);
+  } catch (error) {
+    console.log(error);
+  }
 }

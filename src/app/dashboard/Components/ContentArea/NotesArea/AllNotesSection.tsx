@@ -39,6 +39,8 @@ const AllNotesSection = () => {
     openContentNoteObject: { openContentNote, setOpenContentNote },
     sideBarMenuObject: { sideBarMenu },
     darkModeObject: { darkMode },
+    tagsClickedObject: { tagsClicked, setTagsClicked },
+    isLoadingObject: { isLoading, setIsLoading },
   } = useGlobalContext();
   //console.log(allNotes);
 
@@ -54,13 +56,37 @@ const AllNotesSection = () => {
   useEffect(() => {
     //if all snipperts is selevcted show all the snippets that are deleted
     if (sideBarMenu[0].isSelected) {
-      setFilteredNotes(allNotes.filter((note) => !note.isDeleted));
+      if (tagsClicked.length === 1 && tagsClicked[0] === "All") {
+        setFilteredNotes(allNotes.filter((note) => !note.isDeleted));
+        return;
+      }
+      //Filter out based on the tagsClickedArray
+      if (tagsClicked.length > 0) {
+        const updateNotes = allNotes
+          .filter((note) => {
+            return tagsClicked.every((selectedTag) =>
+              note.tags.some((noteTag) => noteTag.name === selectedTag)
+            );
+          })
+          .filter((note) => !note.isDeleted);
+
+        setFilteredNotes(updateNotes); // setFilteredNotes (all Notes.filter((note) => !note.isTrash)); //If favorite is selected, and we make a note as favorite and not trashed if (sideBarMenu [1].isSelected) { if (tagsClicked.length === 1 && tagsClicked[0] === "All") { setFilteredNotes ( allNotes.filter((note) => note.isFavorite && note?.isTrash false) );
+      }
     }
     //if important is selected and we make a note as favourite and not deleted
     if (sideBarMenu[1].isSelected) {
-      allNotes.filter((note) => note.isImportant && note.isDeleted === false);
+      if (tagsClicked.length === 1 && tagsClicked[0] === "All") {
+        setFilteredNotes(
+          allNotes.filter(
+            (note) => note.isImportant && note?.isDeleted === false
+          )
+        );
+      }
     }
-  }, [allNotes]);
+    if (sideBarMenu[2].isSelected) {
+      setFilteredNotes(allNotes.filter((note) => note?.isDeleted === true));
+    }
+  }, [allNotes, tagsClicked]);
 
   useLayoutEffect(() => {
     if (openContentNote) {
@@ -76,16 +102,36 @@ const AllNotesSection = () => {
         (note) => !note.isDeleted && note.isImportant
       );
       setFilteredNotes(filteredImportnatNotes);
-      console.log("Important notes filtered ...", filteredNotes);
     }
     //if delted is selected
     if (sideBarMenu[2].isSelected) {
       const filteredDeletedNotes = allNotes.filter((note) => note.isDeleted);
 
       setFilteredNotes(filteredDeletedNotes);
-      console.log("deleted notes filtered ...", filteredNotes);
     }
   }, [sideBarMenu]);
+  if (isLoading) {
+    return (
+      <div className=" mt-5 flex flex-wrap gap-4">
+        <ShimmerNoteEffect />
+        <ShimmerNoteEffect />
+        <ShimmerNoteEffect />
+      </div>
+    );
+  }
+  function ShimmerNoteEffect() {
+    return (
+      <div className="h-[380px] w-[300px] bg-slate-200 rounded-md flex flex-col">
+        <div className=" flex justify-between px-5 pt-5">
+          {" "}
+          <div className="w - 1 / 2 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
+          <div className="w - 7 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
+        </div>
+       
+        <div className="h - [230px] mt - 12 w - full bg - slate - 300 "></div>{" "}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -93,18 +139,35 @@ const AllNotesSection = () => {
     >
       {sideBarMenu[0].isSelected && (
         <>
-          {filteredNotes.length != 0 ? (
-            <>
-              {filteredNotes.map((note, index) => (
-                <div key={index}>
-                  <SingleNote note={note} />
-                </div>
-              ))}
-            </>
+          {filteredNotes.length === 0 ? (
+            tagsClicked.filter((tag) => tag !== "All").length > 0 ? (
+              <EmptyPlaceHolder
+                Icon={<DocumentIcon className="w-20 h-20" />}
+                Text={
+                  <span className="text-gray-400 text-lg text-center">
+                    {" "}
+                    It looks like there is no <br /> snippets with these tags
+                  </span>
+                }
+              />
+            ) : (
+              <EmptyPlaceHolder
+                Icon={<DocumentIcon className="w-20 h-20" />}
+                Text={
+                  <span className="text-gray-400 text-lg text-center">
+                    {" "}
+                    It looks like there is no snippets right now
+                  </span>
+                }
+                isNew={true}
+              />
+            )
           ) : (
-            <>
-                <EmptyPlaceHolder Icon={<DocumentIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> It looks like there is no snippets right now</span> } isNew={true} />
-            </>
+            filteredNotes.map((note, noteIndex) => (
+              <div key={noteIndex}>
+                <SingleNote note={note} />
+              </div>
+            ))
           )}
         </>
       )}
@@ -120,7 +183,17 @@ const AllNotesSection = () => {
               ))}
             </>
           ) : (
-            <EmptyPlaceHolder Icon={<ImportantIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> Currently, there are no snippets<br/> marked as important</span> } isNew={false} />
+            <EmptyPlaceHolder
+              Icon={<ImportantIcon className="w-20 h-20" />}
+              Text={
+                <span className="text-gray-400 text-lg text-center">
+                  {" "}
+                  Currently, there are no snippets
+                  <br /> marked as important
+                </span>
+              }
+              isNew={false}
+            />
           )}
         </>
       )}
@@ -136,7 +209,17 @@ const AllNotesSection = () => {
               ))}
             </>
           ) : (
-            <EmptyPlaceHolder Icon={<DeleteIcon className="w-20 h-20"/> } Text={<span className="text-gray-400 text-lg text-center"> Currently, there are no snippets<br/> marked as deleted</span> } isNew={false} /> 
+            <EmptyPlaceHolder
+              Icon={<DeleteIcon className="w-20 h-20" />}
+              Text={
+                <span className="text-gray-400 text-lg text-center">
+                  {" "}
+                  Currently, there are no snippets
+                  <br /> marked as deleted
+                </span>
+              }
+              isNew={false}
+            />
           )}
         </>
       )}
