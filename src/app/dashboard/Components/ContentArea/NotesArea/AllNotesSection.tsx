@@ -299,15 +299,31 @@ const NoteHeader = ({
     // setOpenContentNote(true);
   };
 
-  const handleClickedCheckbox = () => {
-    const newAllNotes = allNotes.map((n) => {
-      if (n.id === note.id) {
-        return { ...n, isImportant: !n.isImportant };
+  const handleClickedCheckbox = async () => {
+    const currentImportant = isImportant;
+    const newImportant = !currentImportant;
+    try {
+      const response = await fetch(`/api/snippets?snippetId=${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isImportant: newImportant }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return n;
-    });
-    setAllNotes(newAllNotes);
-  };
+      // Optional: handle the updatedNote if needed
+      const updatedNote = await response.json();
+  
+      setAllNotes((prevNotes) => prevNotes.map((note) =>
+        note.id === id ? { ...note, isImportant: newImportant } : note))
+      
+      // setSearchQuery("");
+    } catch (error) {
+      console.error("Error updating importance:", error); // Log the error to understand failures
+    }
+    
+  }
+  
 
   return (
     <div className="flex justify-between items-center mx-4">
@@ -451,65 +467,122 @@ const NotFooter = ({
     selectedNoteObject: { selectedNote, setSelectedNote },
   } = useGlobalContext();
   const { toast } = useToast();
+  const [isDeleting, setIsDeleteing] = React.useState(false);
 
-  const deleteNoteFunction = () => {
+  const deleteNoteFunction = async () => {
     if (note.isDeleted) {
       setOpenConfirmationWindow(true);
       setSelectedNote(note);
       return;
     }
-    //make a copy of allnotes
-    const allNotesCopy = [...allNotes];
-
-    //find the index of the note to be deleted
-    const findIndex = allNotesCopy.findIndex((n) => n.id === note.id);
-
-    //mark the note as deleted
-    const clickedNote = { ...allNotesCopy[findIndex], isDeleted: true };
-    //update the note in the copy of all notes
-    allNotesCopy[findIndex] = clickedNote;
-
-    //optionally update the state or the orignal allNotes array
-    //setAllNotes(allNotesCopy);// if using a state management library pr react state
-
-    console.log("DEleted note ....", clickedNote);
-    setAllNotes(allNotesCopy);
-    toast({
-      title: "Snippet has been moved to trash",
-      action: (
-        <ToastAction
-          altText="Undo"
-          onClick={() => resetNoteFunction()}
-          className="bg-[#9588e8] hover:bg-[#9e93e2]"
-        >
-          Undo
-        </ToastAction>
-      ),
-    });
-  };
-  const permanentlyDeleteNote = () => {
-    if (selectedNote) {
-      const updateAllNotes = allNotes.filter((n) => n.id !== selectedNote.id);
-      setAllNotes(updateAllNotes);
-      setOpenConfirmationWindow(false);
-      setSelectedNote(null);
-      toast({
-        title: "Snippet has been permanently deleted",
+    try {
+      const response = await fetch(`/api/snippets?snippetId=${note.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDeleted: true }),
       });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      // Optional: handle the updatedNote if needed
+      const updatedNote = await response.json();
+  
+      setAllNotes((prevNotes) => prevNotes.map((n) =>
+        n.id === note.id ? { ...note, isImportant: true } : n))
+
+      toast({
+        title: "Snippet has been moved to trash",
+        action: (
+          <ToastAction
+            altText="Undo"
+            onClick={() => resetNoteFunction()}
+            className="bg-[#9588e8] hover:bg-[#9e93e2]"
+          >
+            Undo
+          </ToastAction>
+        ),
+      });
+      // setSearchQuery("");
+    } catch (error) {
+      console.error("Error updating importance:", error); // Log the error to understand failures
+    }
+    // //make a copy of allnotes
+    // const allNotesCopy = [...allNotes];
+
+    // //find the index of the note to be deleted
+    // const findIndex = allNotesCopy.findIndex((n) => n.id === note.id);
+
+    // //mark the note as deleted
+    // const clickedNote = { ...allNotesCopy[findIndex], isDeleted: true };
+    // //update the note in the copy of all notes
+    // allNotesCopy[findIndex] = clickedNote;
+
+    // //optionally update the state or the orignal allNotes array
+    // //setAllNotes(allNotesCopy);// if using a state management library pr react state
+
+    // console.log("DEleted note ....", clickedNote);
+    // setAllNotes(allNotesCopy);
+
+  };
+  const permanentlyDeleteNote = async() => {
+    if (selectedNote) {
+      setIsDeleteing(true);
+      try {
+        const response = await fetch(`/api/snippets?snippetId=${selectedNote.id}`, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+        });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        //if the delte request was succesful update the local state 
+        const copyAllNotes = [...allNotes];
+        const updateAllNotes = copyAllNotes.filter((n) => n.id !== selectedNote.id);
+        setAllNotes(updateAllNotes);
+        setOpenConfirmationWindow(false);
+        setSelectedNote(null);
+        toast({
+          title: "Snippet has been permanently deleted",
+        });
+      } catch (error) {
+        console.log(error);
+        toast({
+          title: "Snippet has Not been permanently deleted",
+        });
+        
+      } finally {
+        setIsDeleteing(false);
+      }
+    
     }
   };
 
-  const resetNoteFunction = () => {
-    const deletedNoteIndex = allNotes.findIndex((n) => n.id === note.id);
-    if (deletedNoteIndex !== -1) {
-      const deletedNote = allNotes[deletedNoteIndex];
-      deletedNote.isDeleted = false;
-      setAllNotes([...allNotes]);
+  const resetNoteFunction = async () => {
+    
+    try {
+      const response = await fetch(`/api/snippets?snippetId=${note.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDeleted: false }),
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      // Optional: handle the updatedNote if needed
+      const updatedNote = await response.json();
+  
+      setAllNotes((prevNotes) => prevNotes.map((n) =>
+        n.id === note.id ? { ...note, isImportant: false } : n))
+
       toast({
         title: "Note has been restored",
       });
+    }catch (error) {
+      console.error("Error updating importance:", error); // Log the error to understand failures
     }
-  };
+   
+    }
+  
 
   return (
     <div className="flex justify-between items-center text-[13px] mx-4 mt-3">
@@ -597,7 +670,7 @@ const NotFooter = ({
               className="bg-[#9588e8] hover:bg-[#9f93ee]"
               onClick={permanentlyDeleteNote}
             >
-              Delete
+             {isDeleting?"Deleting..": "Delete"} 
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

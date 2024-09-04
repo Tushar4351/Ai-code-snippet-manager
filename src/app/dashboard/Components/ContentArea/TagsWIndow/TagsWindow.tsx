@@ -205,8 +205,27 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
     </div>
   );
 }
+async function updateNote(note: SingleNoteType, tagToRemove: string) {
+  const updatedTags = note.tags.filter(
+    (tag) => tag.name.toLowerCase() !== tagToRemove.toLowerCase()
+  );
+  const updateNoteResponse = await fetch(`/api/snippets?snippetId=${note.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ...note,
+      tags: updatedTags,
+    }),
+  });
 
-function deleteTag(
+  if (!updateNoteResponse) {
+    throw new Error(`Failed to update note: ${note.id}`);
+  }
+  const updateNote = await updateNoteResponse.json();
+  return updateNote;
+}
+
+const deleteTag = async (
   tag: SingleTagType,
   allTags: SingleTagType[],
   setAllTags: React.Dispatch<React.SetStateAction<SingleTagType[]>>,
@@ -214,39 +233,56 @@ function deleteTag(
   setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>,
   tagsClicked: string[],
   setTagsClicked: React.Dispatch<React.SetStateAction<string[]>>
-) {
-  setTagsClicked(
-    tagsClicked.filter(
-      (t) => t.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
-    )
-  );
+) => {
   try {
-    //Delete tag from allTags
+    // Delete tag from database
+    const deleteTagResponse = await fetch(`/api/tags?tagId=${tag._id}`, {
+      method: "DELETE",
+    });
+
+    if (!deleteTagResponse.ok) {
+      const errorData = await deleteTagResponse.json();
+      throw new Error(`Failed to delete tag: ${errorData.message}`);
+    }
+
+    // Get notes that need to be updated
+    const notesToUpdate = allNotes.filter((note) =>
+      note.tags.some((t) => t.name.toLowerCase() === tag.name.toLowerCase())
+    );
+
+    const updatePromises = notesToUpdate.map((note) =>
+      updateNote(note, tag.name)
+    );
+
+    const updateNotes = await Promise.all(updatePromises);
+
     const updateAllTags = allTags.filter(
       (t) => t.name.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
     );
-    //Delete the tag found in each note and update from all Notes
+
+    // Update all notes
     const updateAllNotes = allNotes.map((note) => {
-      if (
-        note.tags.some(
-          (t) => t.name.toLocaleLowerCase() === tag.name.toLocaleLowerCase()
-        )
-      ) {
-        return {
-          ...note,
-          tags: note.tags.filter(
-            (t) => t.name.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
-          ),
-        };
+      const updatedNote = updateNotes.find((un) => un.id === note.id);
+      if (updatedNote) {
+        return updatedNote;
       }
-      return note;
+      return {
+        ...note,
+        tags: note.tags.filter(
+          (t) => t.name.toLocaleLowerCase() !== tag.name.toLocaleLowerCase()
+        ),
+      };
     });
+
+    setAllTags(updateAllTags);
+    setAllNotes(updateAllNotes);
+    setTagsClicked(
+      tagsClicked.filter((t) => t.toLowerCase() !== tag.name.toLowerCase())
+    );
     toast({
       title: "Tag has been Deleted Successfully",
     });
-    setAllTags(updateAllTags);
-    setAllNotes(updateAllNotes);
   } catch (error) {
     console.log(error);
   }
-}
+};

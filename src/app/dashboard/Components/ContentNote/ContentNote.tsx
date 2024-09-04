@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/ContextApi";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import CloseIcon from "../../../../assets/icons/close.svg";
 import EditSectionIcon from "../../../../assets/icons/editsection.svg";
 import CopyIcon from "../../../../assets/icons/copy.svg";
@@ -26,6 +26,53 @@ import Image from "next/image";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 import { allLanguages } from "@/app/localData/Languages";
+import { debounce } from "lodash";
+
+export async function saveNoteInDB(
+  note: SingleNoteType,
+  isNew: boolean,
+  setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>,
+  setSingleNote: React.Dispatch<
+    React.SetStateAction<SingleNoteType | undefined>
+  >,
+  setIsNewNote: React.Dispatch<React.SetStateAction<boolean>>
+) {
+  const url = isNew ? "/api/snippets" : `/api/snippets?snippetId=${note.id}`;
+  const method = isNew ? "POST" : "PUT";
+  const { id, ...noteData } = note;
+  const body = isNew ? JSON.stringify(noteData) : JSON.stringify(note);
+  try {
+    const response = await fetch(url, {
+      method: method,
+      headers: { "Content-Type": "application/json" },
+      body: body,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    const savedNote = isNew ? { ...note, _id: data.notes._id } : note;
+    console.log(saveNoteInDB);
+
+    setAllNotes((prevNotes) => {
+      const updatedNotes = isNew
+        ? [...prevNotes, savedNote]
+        : prevNotes.map((n) => (n.id === savedNote.id ? savedNote : n));
+
+      return updatedNotes.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    });
+    if (isNew) {
+      setSingleNote(savedNote);
+      setIsNewNote(false);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 const ContentNote = () => {
   const {
@@ -48,28 +95,73 @@ const ContentNote = () => {
       }
     }
   }, [openContentNote, selectedNote]);
-
+  useEffect(() => {
+    if (singleNote && singleNote.title !== "") {
+      debouncedSaveNote(singleNote, isNewNote);
+    }
+  }, [singleNote, isNewNote]);
+  const debouncedSaveNote = useMemo(
+    () =>
+      debounce((note: SingleNoteType, isNew: boolean) => {
+        saveNoteInDB(note, isNew, setAllNotes, setSingleNote, setIsNewNote);
+      }, 500),
+    []
+  );
   //This useeffect is used to add the singlenote to the allnotes only if the singlenote is not empty
   useEffect(() => {
     // if isNewNote is true
     if (isNewNote) {
       // if the single note is not empty
       if (singleNote && singleNote.title !== "") {
-        const updateAllNotes = [...allNotes, singleNote];
-        // sort the allNotes by date
-        const sortedAllNotes = updateAllNotes.sort((a, b) => {
-          return (
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        });
-        // add the single note to the allNotes
-        setAllNotes(sortedAllNotes);
+        addNoteInDB(singleNote, allNotes, setAllNotes);
         // set isNewNote to false
         setIsNewNote(false);
       }
     }
   }, [singleNote]);
 
+  //Add a snippet with the Post Method
+  async function addNoteInDB(
+    note: SingleNoteType,
+    allNotes: SingleNoteType[],
+    setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>
+  ) {
+    // Create a copy of the note object without the id field
+    const { id, ...noteWithoutId } = note;
+    try {
+      const response = await fetch(`/api/snippets`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(noteWithoutId),
+      });
+      if (response.ok) {
+        throw new Error(`HTTP error! status: $(response.status}`);
+      }
+      const data = await response.json();
+      console.log(data);
+      //Extract the id from the response
+      const id = data.notes.id;
+      //Update the singleNote the id
+      const singleNote = {
+        ...note,
+        id: id,
+      };
+      const updateAllNotes = [...allNotes, singleNote];
+      console.log(singleNote);
+
+      // sort the allNotes by date
+      const sortedAllNotes = updateAllNotes.sort((a: any, b: any) => {
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+      });
+      // add the single note to the allNotes
+      setAllNotes(sortedAllNotes);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  console.error(allNotes);
   useEffect(() => {
     if (selectedLanguage && singleNote) {
       const newLanguage = selectedLanguage.name;
@@ -168,13 +260,13 @@ const ContentNoteHeader = ({
     //  console.log(singleNote);
     const newSingleNote = { ...singleNote, title: event.target.value };
     setSingleNote(newSingleNote);
-    const newAllNotes = allNotes.map((note) => {
-      if (note.id === newSingleNote.id) {
-        return newSingleNote;
-      }
-      return note;
-    });
-    setAllNotes(newAllNotes);
+    // const newAllNotes = allNotes.map((note) => {
+    //   if (note.id === newSingleNote.id) {
+    //     return newSingleNote;
+    //   }
+    //   return note;
+    // });
+    // setAllNotes(newAllNotes);
   }
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter") {
@@ -351,13 +443,13 @@ const Description = ({
 
     setSingleNote(newSingleNote);
 
-    const newAllNotes = allNotes.map((note) => {
-      if (note.id === newSingleNote.id) {
-        return newSingleNote;
-      }
-      return note;
-    });
-    setAllNotes(newAllNotes);
+    // const newAllNotes = allNotes.map((note) => {
+    //   if (note.id === newSingleNote.id) {
+    //     return newSingleNote;
+    //   }
+    //   return note;
+    // });
+    // setAllNotes(newAllNotes);
   }
 
   return (
@@ -503,7 +595,7 @@ const CodeBlock = ({
             darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-slate-200"
           } p-1 rounded-md flex gap-1 mb-1`}
         >
-          <SearchIcon className="h-6 w-6 mr-1"/>
+          <SearchIcon className="h-6 w-6 mr-1" />
           <input
             ref={textRef}
             placeholder="Search Language"

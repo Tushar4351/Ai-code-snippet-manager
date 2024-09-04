@@ -11,7 +11,7 @@ import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
 
 import { StaticImageData } from "next/image";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 
 interface DarkModeType {
   id: number;
@@ -270,6 +270,8 @@ export default function GlobalContextProvider({
   const [isLoading, setIsLoading] = useState(false);
   const { isLoaded, user } = useUser();
   const [sharedUserId, setSharedUserId] = useState<string>("");
+  const { isSignedIn, userId } = useAuth();
+
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
   };
@@ -288,144 +290,60 @@ export default function GlobalContextProvider({
   }, []);
 
   useEffect(() => {
-    function updateAllNotes() {
-      const allNotes = [
-        {
-          id: uuidv4(),
-          title: "Introduction to JavaScript",
-          isImportant: true,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description:
-            "A basic introduction to JavaScript programming language.",
-          code: `
-    import React from "react";
-                
-    function HelloWorld() {
-    return <h1>Hello World</h1>;
-    }
-                
-    export default HelloWorld;
-            `,
-          language: "JavaScript",
-          createdAt: "2023-07-01T10:00:00Z",
-          isDeleted: false,
-        },
-        {
-          id: uuidv4(),
-          title: "JavaScript for Data Science",
-          isImportant: false,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description: "Using JavaScript for data science with React.",
-          code: `
-    import React from "react";
-                
-    function HelloWorld() {
-    return <h1>Hello World</h1>;
-    }
-                
-    export default HelloWorld;
-            `,
-          language: "JavaScript",
-          createdAt: "2023-07-02T14:30:00Z",
-          isDeleted: false,
-        },
-        {
-          id: uuidv4(),
-          title: "JavaScript Flexbox Layout",
-          isImportant: true,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description:
-            "A guide to CSS Flexbox layout using JavaScript and React.",
-          code: `
-    import React from "react";
-                
-    function HelloWorld() {
-    return <h1>Hello World</h1>;
-    }
-                
-    export default HelloWorld;
-            `,
-          language: "JavaScript",
-          createdAt: "2023-07-03T09:00:00Z",
-          isDeleted: false,
-        },
-        {
-          id: uuidv4(),
-          title: "JavaScript Basics",
-          isImportant: false,
-          tags: [
-            { id: uuidv4(), name: "tag1" },
-            { id: uuidv4(), name: "tag2" },
-            { id: uuidv4(), name: "tag3" },
-          ],
-          description: "Basic JavaScript concepts for beginners using React.",
-          code: `
-    import React from "react";
-                
-    function HelloWorld() {
-    return <h1>Hello World</h1>;
-    }
-                
-    export default HelloWorld;
-            `,
-          language: "JavaScript",
-          createdAt: "2023-07-04T12:15:00Z",
-          isDeleted: false,
-        },
-      ];
+    async function fetchAllNotes() {
+      try {
+        const response = await fetch(`/api/snippets?clerkId=${user?.id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+        const data: { notes: SingleNoteType[] } = await response.json();
+        if (data.notes) {
+          console.log(data.notes);
+          //sort notes
+          const sortedAllNotes: SingleNoteType[] = data.notes.sort(
+            (a: any, b: any) => {
+              return (
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime()
+              );
+            }
+          );
 
-      setTimeout(() => {
-        setAllNotes(allNotes);
-      }, 1200);
+          setAllNotes(sortedAllNotes);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-    function updateAllTags() {
-      const allTags = [
-        {
-          id: uuidv4(),
-          name: "All",
-        },
-        {
-          id: uuidv4(),
-          name: "tag2",
-        },
-        {
-          id: uuidv4(),
-          name: "tag3",
-        },
-        {
-          id: uuidv4(),
-          name: "tag4",
-        },
-        {
-          id: uuidv4(),
-          name: "tag5",
-        },
-        {
-          id: uuidv4(),
-          name: "tag6",
-        },
-        {
-          id: uuidv4(),
-          name: "tag7",
-        },
-      ];
-      setAllTags(allTags);
+    async function fetchAllTags() {
+      try {
+        const response = await fetch(`/api/tags?clerkId=${user?.id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch tags");
+        }
+        const data: { tags: SingleTagType[] } = await response.json();
+        if (data.tags) {
+          const allTags: SingleTagType = {
+            id: uuidv4(),
+            name: "All",
+            clerkUserId: user?.id || "",
+          };
+          const tempAllTags = [allTags, ...data.tags];
+          setAllTags(tempAllTags);
+        }
+      } catch (error) {
+        console.error("Error tags:", error); // Log the error to understand failures
+      } finally {
+        setIsLoading(false);
+      }
     }
-    updateAllTags();
-    updateAllNotes();
-  }, []);
+    if (isLoaded && isSignedIn) {
+      fetchAllTags();
+      fetchAllNotes();
+    }
+  }, [user, isLoaded, isSignedIn]);
 
   useEffect(() => {
     setSelectedTags(selectedNote?.tags || []);

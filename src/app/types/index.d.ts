@@ -26,13 +26,13 @@ interface SideBarMenu {
 }
 
 interface SingleTagType {
-  id: string;
-  clerkUsId: string;
+  _id: string;
+  clerkUserId: string;
   name: string;
 }
 interface SingleNoteType {
   id: string;
-  clerkUsId: string;
+  clerkUserId: string;
   title: string;
   isImportant: boolean;
   tags: SingleTagType[];

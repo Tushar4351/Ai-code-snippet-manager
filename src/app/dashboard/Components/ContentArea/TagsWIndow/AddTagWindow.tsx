@@ -134,7 +134,7 @@ const AddTagWindow = () => {
 
 export default AddTagWindow;
 
-function addNewTagFunction(
+async function addNewTagFunction(
   allTags: SingleTagType[],
   setAllTags: (value: React.SetStateAction<SingleTagType[]>) => void,
   setOpenNewTagsWindow: (value: React.SetStateAction<boolean>) => void,
@@ -143,11 +143,28 @@ function addNewTagFunction(
 ) {
   const newTag = {
     id: uuidv4(),
-    clerkUsId: sharedUserId || "",
+    clerkUserId: sharedUserId || "",
     name: tagName,
   };
   try {
-    setAllTags([...allTags, newTag]);
+    const response = await fetch("/api/tags", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", },
+      body: JSON.stringify(newTag),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to add tag");
+    }
+    const data = await response.json();
+    if (data.error) {
+      throw new Error(data.error);
+    }
+    const addedTag: SingleTagType = {
+      id: data.tags.id,
+      name: data.tags.name,
+      clerkUserId: data.tags.clerkUserId,
+    };
+    setAllTags((prevTags)=>[...prevTags, addedTag]);
     setOpenNewTagsWindow(false);
     toast({
       title: "Tag has been Added Successfully",
