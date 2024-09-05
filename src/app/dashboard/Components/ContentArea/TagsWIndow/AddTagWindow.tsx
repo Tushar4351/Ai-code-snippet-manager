@@ -160,7 +160,7 @@ async function addNewTagFunction(
       throw new Error(data.error);
     }
     const addedTag: SingleTagType = {
-      id: data.tags.id,
+      _id: data.tags.id,
       name: data.tags.name,
       clerkUserId: data.tags.clerkUserId,
     };
@@ -187,7 +187,7 @@ function handleEditTag(
 ) {
   // Update all tags
   const updateAllTags = allTags.map((tag) =>
-    tag.id === selectedTagToEdit?.id ? { ...tag, name: tagName } : tag
+    tag._id === selectedTagToEdit?._id ? { ...tag, name: tagName } : tag
   );
 
   // Update all notes with the new tag name

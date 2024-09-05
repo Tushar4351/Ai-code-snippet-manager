@@ -22,7 +22,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import Image from "next/image";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-javascript";
 import { allLanguages } from "@/app/localData/Languages";
@@ -37,9 +36,9 @@ export async function saveNoteInDB(
   >,
   setIsNewNote: React.Dispatch<React.SetStateAction<boolean>>
 ) {
-  const url = isNew ? "/api/snippets" : `/api/snippets?snippetId=${note.id}`;
+  const url = isNew ? "/api/snippets" : `/api/snippets?snippetId=${note._id}`;
   const method = isNew ? "POST" : "PUT";
-  const { id, ...noteData } = note;
+  const { _id, ...noteData } = note;
   const body = isNew ? JSON.stringify(noteData) : JSON.stringify(note);
   try {
     const response = await fetch(url, {
@@ -58,7 +57,7 @@ export async function saveNoteInDB(
     setAllNotes((prevNotes) => {
       const updatedNotes = isNew
         ? [...prevNotes, savedNote]
-        : prevNotes.map((n) => (n.id === savedNote.id ? savedNote : n));
+        : prevNotes.map((n) => (n._id === savedNote._id ? savedNote : n));
 
       return updatedNotes.sort(
         (a, b) =>
@@ -107,61 +106,6 @@ const ContentNote = () => {
       }, 500),
     []
   );
-  //This useeffect is used to add the singlenote to the allnotes only if the singlenote is not empty
-  useEffect(() => {
-    // if isNewNote is true
-    if (isNewNote) {
-      // if the single note is not empty
-      if (singleNote && singleNote.title !== "") {
-        addNoteInDB(singleNote, allNotes, setAllNotes);
-        // set isNewNote to false
-        setIsNewNote(false);
-      }
-    }
-  }, [singleNote]);
-
-  //Add a snippet with the Post Method
-  async function addNoteInDB(
-    note: SingleNoteType,
-    allNotes: SingleNoteType[],
-    setAllNotes: React.Dispatch<React.SetStateAction<SingleNoteType[]>>
-  ) {
-    // Create a copy of the note object without the id field
-    const { id, ...noteWithoutId } = note;
-    try {
-      const response = await fetch(`/api/snippets`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(noteWithoutId),
-      });
-      if (response.ok) {
-        throw new Error(`HTTP error! status: $(response.status}`);
-      }
-      const data = await response.json();
-      console.log(data);
-      //Extract the id from the response
-      const id = data.notes.id;
-      //Update the singleNote the id
-      const singleNote = {
-        ...note,
-        id: id,
-      };
-      const updateAllNotes = [...allNotes, singleNote];
-      console.log(singleNote);
-
-      // sort the allNotes by date
-      const sortedAllNotes = updateAllNotes.sort((a: any, b: any) => {
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      });
-      // add the single note to the allNotes
-      setAllNotes(sortedAllNotes);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  console.error(allNotes);
   useEffect(() => {
     if (selectedLanguage && singleNote) {
       const newLanguage = selectedLanguage.name;
@@ -170,7 +114,7 @@ const ContentNote = () => {
         language: newLanguage,
       };
       const updateAllNotes = allNotes.map((note) => {
-        if (note.id === singleNote.id) {
+        if (note._id === singleNote._id) {
           return updateSingleNote;
         }
         return note;
@@ -257,16 +201,15 @@ const ContentNoteHeader = ({
   const [onFocus, setOnFocus] = useState(false);
 
   function onUpdateTitle(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    //  console.log(singleNote);
     const newSingleNote = { ...singleNote, title: event.target.value };
     setSingleNote(newSingleNote);
-    // const newAllNotes = allNotes.map((note) => {
-    //   if (note.id === newSingleNote.id) {
-    //     return newSingleNote;
-    //   }
-    //   return note;
-    // });
-    // setAllNotes(newAllNotes);
+    const newAllNotes = allNotes.map((note) => {
+      if (note._id === newSingleNote._id) {
+        return newSingleNote;
+      }
+      return note;
+    });
+    setAllNotes(newAllNotes);
   }
   function handleKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter") {
@@ -324,15 +267,15 @@ const NoteTags = ({
   }, [isOpened]);
 
   function onClickedTag(tag: SingleTagType) {
-    const newTags = singleNote.tags.some((t) => t.id === tag.id)
-      ? singleNote.tags.filter((t) => t.id !== tag.id)
+    const newTags = singleNote.tags.some((t) => t._id === tag._id)
+      ? singleNote.tags.filter((t) => t._id !== tag._id)
       : [...singleNote.tags, tag];
 
     const newSingleNote = { ...singleNote, tags: newTags };
     setSingleNote(newSingleNote);
 
     const newAllNotes = allNotes.map((note) =>
-      note.id === newSingleNote.id ? newSingleNote : note
+      note._id === newSingleNote._id ? newSingleNote : note
     );
     setAllNotes(newAllNotes);
   }
@@ -363,7 +306,7 @@ const NoteTags = ({
 
           {singleNote.tags.map((tag) => (
             <div
-              key={tag.id}
+              key={tag._id}
               className="bg-[#d5d0f8] px-2 p-1 text-xs rounded-md text-[#9588e8] cursor-pointer"
             >
               {tag.name}
@@ -412,7 +355,7 @@ const TagsMenu = ({
                 ? "bg-[#d5d0f8] text-[#9588e8]"
                 : ""
             }`}
-            key={tag.id}
+            key={tag._id}
           >
             {tag.name}
           </DropdownMenuItem>
@@ -438,18 +381,16 @@ const Description = ({
   const [isFocused, setIsFocused] = useState(false);
 
   function onUpdateDescription(event: React.ChangeEvent<HTMLTextAreaElement>) {
-    //  console.log(singleNote);
     const newSingleNote = { ...singleNote, description: event.target.value };
 
     setSingleNote(newSingleNote);
-
-    // const newAllNotes = allNotes.map((note) => {
-    //   if (note.id === newSingleNote.id) {
-    //     return newSingleNote;
-    //   }
-    //   return note;
-    // });
-    // setAllNotes(newAllNotes);
+    const newAllNotes = allNotes.map((note) => {
+      if (note._id === newSingleNote._id) {
+        return newSingleNote;
+      }
+      return note;
+    });
+    setAllNotes(newAllNotes);
   }
 
   return (
@@ -523,7 +464,7 @@ const CodeBlock = ({
     const newSingleNote = { ...singleNote, code: code };
 
     const updateAllNotes = allNotes.map((note) => {
-      if (note.id === newSingleNote.id) {
+      if (note._id === newSingleNote._id) {
         return newSingleNote;
       }
       return note;
@@ -538,8 +479,6 @@ const CodeBlock = ({
       seIsCopied(false);
     }, 1200);
   }
-
-  console.log(singleNote.code);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);

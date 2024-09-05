@@ -301,7 +301,7 @@ export default function GlobalContextProvider({
           console.log(data.notes);
           //sort notes
           const sortedAllNotes: SingleNoteType[] = data.notes.sort(
-            (a: any, b: any) => {
+            (a, b) => {
               return (
                 new Date(b.createdAt).getTime() -
                 new Date(a.createdAt).getTime()
@@ -326,7 +326,7 @@ export default function GlobalContextProvider({
         const data: { tags: SingleTagType[] } = await response.json();
         if (data.tags) {
           const allTags: SingleTagType = {
-            id: uuidv4(),
+            _id: uuidv4(),
             name: "All",
             clerkUserId: user?.id || "",
           };

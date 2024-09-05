@@ -209,7 +209,7 @@ async function updateNote(note: SingleNoteType, tagToRemove: string) {
   const updatedTags = note.tags.filter(
     (tag) => tag.name.toLowerCase() !== tagToRemove.toLowerCase()
   );
-  const updateNoteResponse = await fetch(`/api/snippets?snippetId=${note.id}`, {
+  const updateNoteResponse = await fetch(`/api/snippets?snippetId=${note._id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -219,7 +219,7 @@ async function updateNote(note: SingleNoteType, tagToRemove: string) {
   });
 
   if (!updateNoteResponse) {
-    throw new Error(`Failed to update note: ${note.id}`);
+    throw new Error(`Failed to update note: ${note._id}`);
   }
   const updateNote = await updateNoteResponse.json();
   return updateNote;
@@ -262,7 +262,7 @@ const deleteTag = async (
 
     // Update all notes
     const updateAllNotes = allNotes.map((note) => {
-      const updatedNote = updateNotes.find((un) => un.id === note.id);
+      const updatedNote = updateNotes.find((un) => un._id === note._id);
       if (updatedNote) {
         return updatedNote;
       }

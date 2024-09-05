@@ -127,7 +127,6 @@ const AllNotesSection = () => {
           <div className="w - 1 / 2 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
           <div className="w - 7 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
         </div>
-       
         <div className="h - [230px] mt - 12 w - full bg - slate - 300 "></div>{" "}
       </div>
     );
@@ -234,9 +233,8 @@ const SingleNote = ({ note }: { note: SingleNoteType }) => {
     darkModeObject: { darkMode },
     openContentNoteObject: { openContentNote },
   } = useGlobalContext();
-  // console.log("single note :", note);
   const {
-    id,
+    _id,
     title,
     createdAt,
     tags,
@@ -256,7 +254,7 @@ const SingleNote = ({ note }: { note: SingleNoteType }) => {
       } max-sm:w-full rounded-lg py-4`}
     >
       <NoteHeader
-        id={id}
+        id={_id}
         title={title}
         isImportant={isImportant}
         isDeleted={isDeleted}
@@ -313,17 +311,18 @@ const NoteHeader = ({
       }
       // Optional: handle the updatedNote if needed
       const updatedNote = await response.json();
-  
-      setAllNotes((prevNotes) => prevNotes.map((note) =>
-        note.id === id ? { ...note, isImportant: newImportant } : note))
-      
+
+      setAllNotes((prevNotes) =>
+        prevNotes.map((note) =>
+          note._id === id ? { ...note, isImportant: newImportant } : note
+        )
+      );
+
       // setSearchQuery("");
     } catch (error) {
       console.error("Error updating importance:", error); // Log the error to understand failures
     }
-    
-  }
-  
+  };
 
   return (
     <div className="flex justify-between items-center mx-4">
@@ -406,7 +405,7 @@ const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
     <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
       {tags.map((tag) => (
         <span
-          key={tag.id}
+          key={tag._id}
           className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]"
         >
           {tag.name}
@@ -476,7 +475,7 @@ const NotFooter = ({
       return;
     }
     try {
-      const response = await fetch(`/api/snippets?snippetId=${note.id}`, {
+      const response = await fetch(`/api/snippets?snippetId=${note._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isDeleted: true }),
@@ -486,9 +485,12 @@ const NotFooter = ({
       }
       // Optional: handle the updatedNote if needed
       const updatedNote = await response.json();
-  
-      setAllNotes((prevNotes) => prevNotes.map((n) =>
-        n.id === note.id ? { ...note, isImportant: true } : n))
+
+      setAllNotes((prevNotes) =>
+        prevNotes.map((n) =>
+          n._id === note._id ? { ...note, isImportant: true } : n
+        )
+      );
 
       toast({
         title: "Snippet has been moved to trash",
@@ -506,38 +508,26 @@ const NotFooter = ({
     } catch (error) {
       console.error("Error updating importance:", error); // Log the error to understand failures
     }
-    // //make a copy of allnotes
-    // const allNotesCopy = [...allNotes];
-
-    // //find the index of the note to be deleted
-    // const findIndex = allNotesCopy.findIndex((n) => n.id === note.id);
-
-    // //mark the note as deleted
-    // const clickedNote = { ...allNotesCopy[findIndex], isDeleted: true };
-    // //update the note in the copy of all notes
-    // allNotesCopy[findIndex] = clickedNote;
-
-    // //optionally update the state or the orignal allNotes array
-    // //setAllNotes(allNotesCopy);// if using a state management library pr react state
-
-    // console.log("DEleted note ....", clickedNote);
-    // setAllNotes(allNotesCopy);
-
   };
-  const permanentlyDeleteNote = async() => {
+  const permanentlyDeleteNote = async () => {
     if (selectedNote) {
       setIsDeleteing(true);
       try {
-        const response = await fetch(`/api/snippets?snippetId=${selectedNote.id}`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-        });
+        const response = await fetch(
+          `/api/snippets?snippetId=${selectedNote._id}`,
+          {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+          }
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        //if the delte request was succesful update the local state 
+        //if the delte request was succesful update the local state
         const copyAllNotes = [...allNotes];
-        const updateAllNotes = copyAllNotes.filter((n) => n.id !== selectedNote.id);
+        const updateAllNotes = copyAllNotes.filter(
+          (n) => n._id !== selectedNote._id
+        );
         setAllNotes(updateAllNotes);
         setOpenConfirmationWindow(false);
         setSelectedNote(null);
@@ -549,18 +539,15 @@ const NotFooter = ({
         toast({
           title: "Snippet has Not been permanently deleted",
         });
-        
       } finally {
         setIsDeleteing(false);
       }
-    
     }
   };
 
   const resetNoteFunction = async () => {
-    
     try {
-      const response = await fetch(`/api/snippets?snippetId=${note.id}`, {
+      const response = await fetch(`/api/snippets?snippetId=${note._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ isDeleted: false }),
@@ -570,19 +557,20 @@ const NotFooter = ({
       }
       // Optional: handle the updatedNote if needed
       const updatedNote = await response.json();
-  
-      setAllNotes((prevNotes) => prevNotes.map((n) =>
-        n.id === note.id ? { ...note, isImportant: false } : n))
+
+      setAllNotes((prevNotes) =>
+        prevNotes.map((n) =>
+          n._id === note._id ? { ...note, isImportant: false } : n
+        )
+      );
 
       toast({
         title: "Note has been restored",
       });
-    }catch (error) {
+    } catch (error) {
       console.error("Error updating importance:", error); // Log the error to understand failures
     }
-   
-    }
-  
+  };
 
   return (
     <div className="flex justify-between items-center text-[13px] mx-4 mt-3">
@@ -670,7 +658,7 @@ const NotFooter = ({
               className="bg-[#9588e8] hover:bg-[#9f93ee]"
               onClick={permanentlyDeleteNote}
             >
-             {isDeleting?"Deleting..": "Delete"} 
+              {isDeleting ? "Deleting.." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

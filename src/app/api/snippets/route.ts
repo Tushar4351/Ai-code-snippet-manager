@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const {
-      clerkUsId,
+      clerkUserId,
       title,
       isImportant,
       tags,
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     } = await req.json();
     await connectToDatabase();
     const note = new SingleSnippet({
-      clerkUsId,
+      clerkUserId,
       title,
       isImportant,
       tags,
@@ -28,6 +28,7 @@ export async function POST(req: Request) {
       isDeleted,
     });
     const savedNote = await note.save();
+    console.log("faewfresfa", savedNote);
 
     return NextResponse.json(
       {
@@ -43,6 +44,55 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Error saving note" }, { status: 400 });
   }
 }
+//generate the PUT method
+export async function PUT(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const snippetId = url.searchParams.get("snippetId");
+    console.log("response snippetId", snippetId);
+    const { title, isImportant, tags, description, code, language, isDeleted } =
+      await req.json();
+    //console.log("response", req.json());
+
+    await connectToDatabase();
+
+    const updatedSnippet = await SingleSnippet.findByIdAndUpdate(
+      snippetId,
+      {
+        title,
+        isImportant,
+        tags,
+        description,
+        code,
+        language,
+        isDeleted,
+      },
+      { new: true }
+    );
+
+    if (!updatedSnippet) {
+      return NextResponse.json(
+        { message: "Snippet not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        snippet: updatedSnippet,
+        message: "Snippet updated successfully",
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error updating snippet:", error);
+    return NextResponse.json(
+      { message: "Error updating snippet" },
+      { status: 400 }
+    );
+  }
+}
+
 export async function GET(req: any) {
   try {
     const clerkId = req.nextUrl.searchParams.get("clerkId");
@@ -58,13 +108,18 @@ export async function DELETE(request: Request) {
   try {
     const url = new URL(request.url);
     const snippetId = url.searchParams.get("snippetId");
-    if (snippetId) {
+    console.log("deletev snippet:", snippetId);
+
+    if (!snippetId) {
       return NextResponse.json(
         { message: "snippetId is required" },
         { status: 400 }
       );
     }
-    const snippetToDelete = await SingleSnippet.findOneAndDelete({ id: snippetId });
+    const snippetToDelete = await SingleSnippet.findOneAndDelete({
+      _id: snippetId,
+    });
+    console.log("snippetToDelete snippet:", snippetToDelete);
     if (!snippetToDelete) {
       return NextResponse.json(
         { message: "Snippet not found" },

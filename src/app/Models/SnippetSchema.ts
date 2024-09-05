@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-//Define the SingleTagType Schema
+// Define the SingleTagType Schema
 const SingleTagSchema = new Schema(
   {
     name: {
@@ -13,10 +13,12 @@ const SingleTagSchema = new Schema(
     },
   },
   {
-    id: false,
+    _id: false,
   }
 );
-const SingleSnippetSchema = new mongoose.Schema({
+
+// Define the SingleSnippet Schema
+const SingleSnippetSchema = new Schema({
   clerkUserId: {
     type: String,
     required: true,
@@ -31,34 +33,27 @@ const SingleSnippetSchema = new mongoose.Schema({
   },
   tags: {
     type: [SingleTagSchema],
-    required: true,
     default: [],
   },
   description: {
     type: String,
-    required: true,
   },
   code: {
     type: String,
-    required: true,
   },
   language: {
     type: String,
-    required: true,
   },
   createdAt: {
-    type: String,
-    required: true,
+    type: Date,
     default: "",
   },
   isDeleted: {
     type: Boolean,
-    required: true,
     default: false,
   },
 });
 
-// Export the model
 const SingleSnippet =
   mongoose.models.SingleSnippet ||
   mongoose.model("SingleSnippet", SingleSnippetSchema);

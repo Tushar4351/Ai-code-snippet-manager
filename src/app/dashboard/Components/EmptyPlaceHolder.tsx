@@ -16,7 +16,7 @@ const EmptyPlaceHolder = ({
     allNotesObject: { allNotes, setAllNotes },
     selectedNoteObject: { setSelectedNote },
     isNewNoteObject: { setIsNewNote },
-    sharedUserIdObject:{sharedUserId, setSharedUserId}
+    sharedUserIdObject: { sharedUserId, setSharedUserId },
   } = useGlobalContext();
 
   return (
@@ -57,8 +57,8 @@ export function openTheContentNote(
   sharedUserId: string
 ) {
   const newSingleNote = {
-    id: uuidv4(),
-    clerkUsId: sharedUserId || "",
+    _id: uuidv4(),
+    clerkUserId: sharedUserId || "",
     title: "",
     createdAt: formatDate(new Date()),
     tags: [],

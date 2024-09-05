@@ -31,7 +31,7 @@ interface SingleTagType {
   name: string;
 }
 interface SingleNoteType {
-  id: string;
+_id: string;
   clerkUserId: string;
   title: string;
   isImportant: boolean;

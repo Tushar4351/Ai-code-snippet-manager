@@ -47,7 +47,6 @@ export default function SwiperSelection() {
       return newTagsClicked;
     });
   }, [tagsSelected]);
-  console.log(tagsClicked);
 
   useEffect(() => {
     if (allTags) {
@@ -91,7 +90,6 @@ export default function SwiperSelection() {
       setTagsSelected(newTagsSelected);
     }
   };
-  console.log(tagsSelected);
 
   return (
     <>
