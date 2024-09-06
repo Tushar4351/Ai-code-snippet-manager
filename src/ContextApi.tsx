@@ -1,11 +1,10 @@
 "use client";
 
 import { useContext, createContext, useState, useEffect } from "react";
-import SnippetIcon from "./assets/icons/snippet.svg";
-import ImportantIcon from "./assets/icons/important.svg";
-import DeleteIcon from "./assets/icons/delete.svg";
-import TagsIcon from "./assets/icons/tags.svg";
-import LogoutIcon from "./assets/icons/logout.svg";
+import { HiOutlineCodeBracketSquare } from "react-icons/hi2";
+import { FaRegStar } from "react-icons/fa6";
+import { MdDeleteOutline } from "react-icons/md";
+import { TbTags,TbLogout2 } from "react-icons/tb";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
@@ -204,19 +203,23 @@ export default function GlobalContextProvider({
       id: 1,
       name: "Snippets",
       isSelected: true,
-      icon: <SnippetIcon className="h-6 w-6 cursor-pointer" />,
+      icon: (
+        <HiOutlineCodeBracketSquare
+          className="h-6 w-6 cursor-pointer"
+        />
+      ),
     },
     {
       id: 2,
       name: "Important",
       isSelected: false,
-      icon: <ImportantIcon className="h-6 w-6 cursor-pointer" />,
+      icon: <FaRegStar className="h-6 w-6 cursor-pointer" />,
     },
     {
       id: 3,
       name: "Delete",
       isSelected: false,
-      icon: <DeleteIcon className="w-6 h-6 cursor-pointer" />,
+      icon: <MdDeleteOutline className="w-6 h-6 cursor-pointer" />,
     },
   ]);
   const [darkMode, setDarkMode] = useState<DarkModeType[]>([
@@ -253,13 +256,13 @@ export default function GlobalContextProvider({
       id: 1,
       name: "Tags",
       isSelected: false,
-      icon: <TagsIcon className="h-6 w-6 cursor-pointer" />,
+      icon: <TbTags className="h-6 w-6 cursor-pointer" />,
     },
     {
       id: 2,
       name: "Log Out",
       isSelected: false,
-      icon: <LogoutIcon className="h-6 w-6 cursor-pointer" />,
+      icon: <TbLogout2 className="h-6 w-6 cursor-pointer" />,
     },
   ]);
   const [openNewTagsWindow, setOpenNewTagsWindow] = useState(false);
@@ -300,14 +303,11 @@ export default function GlobalContextProvider({
         if (data.notes) {
           console.log(data.notes);
           //sort notes
-          const sortedAllNotes: SingleNoteType[] = data.notes.sort(
-            (a, b) => {
-              return (
-                new Date(b.createdAt).getTime() -
-                new Date(a.createdAt).getTime()
-              );
-            }
-          );
+          const sortedAllNotes: SingleNoteType[] = data.notes.sort((a, b) => {
+            return (
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            );
+          });
 
           setAllNotes(sortedAllNotes);
         }

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 // Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import PlusIcon from "../../../../../assets/icons/plus.svg";
@@ -8,19 +8,18 @@ import "swiper/css/free-mode";
 import "swiper/css/pagination";
 
 // import required modules
-import { FreeMode, Pagination } from "swiper/modules";
+import { FreeMode} from "swiper/modules";
 import { useGlobalContext } from "@/ContextApi";
 import AddTagWindow from "../TagsWIndow/AddTagWindow";
-import { Tags } from "lucide-react";
 
 export default function SwiperSelection() {
   const {
     darkModeObject: { darkMode },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
-    allTagsObject: { allTags, setAllTags },
-    tagsClickedObject: { tagsClicked, setTagsClicked },
+    allTagsObject: { allTags },
+    tagsClickedObject: {  setTagsClicked },
     sideBarMenuObject: { sideBarMenu },
-    isLoadingObject: { isLoading, setIsLoading },
+    isLoadingObject: { isLoading },
   } = useGlobalContext();
   const [tagsSelected, setTagsSelected] = useState<boolean[]>([]);
 
@@ -120,7 +119,11 @@ export default function SwiperSelection() {
                 <SwiperSlide
                   key={index}
                   className={`${
-                    tagsSelected[index]
+                    darkMode[1].isSelected
+                      ? tagsSelected[index]
+                        ? "bg-[#9588e8] text-white"
+                        : "bg-[#1f1e25] text-white"
+                      : tagsSelected[index]
                       ? "bg-[#9588e8] text-white"
                       : "bg-white text-gray-400"
                   } p-1 rounded-md w-20`}

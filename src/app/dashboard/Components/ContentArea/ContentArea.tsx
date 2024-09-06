@@ -13,7 +13,7 @@ const ContextArea = () => {
   } = useGlobalContext();
   return (
     <div
-      className={`${darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-gray-100"} p-5 h-screen`}
+      className={`${darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-gray-100"} p-5 h-screen overflow-y-auto`}
     >
       <TopBar />
       <NotesArea />

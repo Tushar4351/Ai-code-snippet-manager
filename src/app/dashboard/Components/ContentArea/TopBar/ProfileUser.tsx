@@ -5,7 +5,6 @@ import Image from "next/image";
 const ProfileUser = () => {
   const { user } = useUser();
   //console.log("user:  ", user);
-  const imageUrl = user?.imageUrl;
 
   return (
     <div className="flex gap-3 items-center">

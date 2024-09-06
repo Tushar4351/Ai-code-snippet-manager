@@ -22,7 +22,7 @@ const AddTagWindow = () => {
     allNotesObject: { allNotes, setAllNotes },
     selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
-    sharedUserIdObject:{sharedUserId, setSharedUserId}
+    sharedUserIdObject:{sharedUserId, }
   } = useGlobalContext();
 
   const [tagName, setTagName] = useState("");

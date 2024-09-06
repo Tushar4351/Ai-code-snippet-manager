@@ -1,9 +1,9 @@
 import { useGlobalContext } from "@/ContextApi";
 import DocumentIcon from "../../../../../assets/icons/document.svg";
-import DeleteIcon from "../../../../../assets/icons/delete.svg";
-import ImportantIcon from "../../../../../assets/icons/important.svg";
-import EditIcon from "../../../../../assets/icons/edit.svg";
-import RestoreIcon from "../../../../../assets/icons/restore.svg";
+import { MdDeleteOutline } from "react-icons/md";
+import { FaRegStar, FaStar } from "react-icons/fa6";
+import { RiEditCircleLine } from "react-icons/ri";
+import { MdOutlineRestore } from "react-icons/md";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
@@ -29,7 +29,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import EmptyPlaceHolder from "../../EmptyPlaceHolder";
 
@@ -183,7 +182,7 @@ const AllNotesSection = () => {
             </>
           ) : (
             <EmptyPlaceHolder
-              Icon={<ImportantIcon className="w-20 h-20" />}
+              Icon={<FaRegStar className="w-20 h-20 text-gray-400" />}
               Text={
                 <span className="text-gray-400 text-lg text-center">
                   {" "}
@@ -209,7 +208,7 @@ const AllNotesSection = () => {
             </>
           ) : (
             <EmptyPlaceHolder
-              Icon={<DeleteIcon className="w-20 h-20" />}
+              Icon={<MdDeleteOutline className="w-20 h-20 text-gray-400" />}
               Text={
                 <span className="text-gray-400 text-lg text-center">
                   {" "}
@@ -285,7 +284,7 @@ const NoteHeader = ({
   const {
     openContentNoteObject: { setOpenContentNote },
     selectedNoteObject: { setSelectedNote },
-    allNotesObject: { allNotes, setAllNotes },
+    allNotesObject: { setAllNotes },
     darkModeObject: { darkMode },
   } = useGlobalContext();
 
@@ -336,12 +335,12 @@ const NoteHeader = ({
               <Button
                 className={`${
                   darkMode[1].isSelected
-                    ? "bg-[#151419] hover:bg-gray-800"
-                    : "bg-white hover:bg-gray-200"
+                    ? "bg-[#1f1e25] hover:bg-gray-800"
+                    : "bg-gray-200 hover:bg-gray-100"
                 }  border-none rounded-full p-2`}
               >
-                <EditIcon
-                  className="w-6 h-6 cursor-pointer"
+                <RiEditCircleLine
+                  className="w-6 h-6 cursor-pointer text-[#9588e8]"
                   onClick={handleEditClick}
                 />
               </Button>
@@ -363,14 +362,20 @@ const NoteHeader = ({
                 <Button
                   className={`${
                     darkMode[1].isSelected
-                      ? "bg-[#151419] hover:bg-gray-800"
-                      : "bg-white hover:bg-gray-200"
-                  } ${
-                    note.isImportant ? "bg-[#d5d0f8]" : ""
-                  }  border-none rounded-full p-2`}
+                      ? "bg-[#1f1e25] hover:bg-gray-800"
+                      : "bg-gray-200 hover:bg-gray-100"
+                  } border-none rounded-full p-2`}
                   onClick={handleClickedCheckbox}
                 >
-                  <ImportantIcon className={`w-6 h-6 cursor-pointer `} />
+                  {note.isImportant ? (
+                    <FaStar
+                      className={`w-6 h-6 cursor-pointer text-[#9588e8] `}
+                    />
+                  ) : (
+                    <FaRegStar
+                      className={`w-6 h-6 cursor-pointer text-[#9588e8] `}
+                    />
+                  )}
                 </Button>
               </TooltipTrigger>
               <TooltipContent
@@ -403,9 +408,9 @@ const NoteDate = ({ createdAt }: { createdAt: string }) => {
 const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
   return (
     <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
-      {tags.map((tag) => (
+      {tags.map((tag,index) => (
         <span
-          key={tag._id}
+          key={index}
           className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]"
         >
           {tag.name}
@@ -456,7 +461,6 @@ const NotFooter = ({
   note: SingleNoteType;
 }) => {
   const {
-    selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
     darkModeObject: { darkMode },
     allNotesObject: { allNotes, setAllNotes },
     openConfirmationWindowObject: {
@@ -586,12 +590,12 @@ const NotFooter = ({
                 <Button
                   className={`${
                     darkMode[1].isSelected
-                      ? "bg-[#151419] hover:bg-gray-800"
-                      : "bg-white hover:bg-gray-200"
+                      ? "bg-[#1f1e25] hover:bg-gray-800"
+                      : "bg-gray-200 hover:bg-gray-100"
                   } border-none rounded-full p-2`}
                   onClick={resetNoteFunction}
                 >
-                  <RestoreIcon className="w-6 h-6 cursor-pointer" />
+                  <MdOutlineRestore className="w-6 h-6 cursor-pointer text-[#9588e8]" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent
@@ -611,12 +615,12 @@ const NotFooter = ({
               <Button
                 className={`${
                   darkMode[1].isSelected
-                    ? "bg-[#151419] hover:bg-gray-800"
-                    : "bg-white hover:bg-gray-200"
+                    ? "bg-[#1f1e25] hover:bg-gray-800"
+                    : "bg-gray-200 hover:bg-gray-100"
                 } border-none rounded-full p-2`}
                 onClick={deleteNoteFunction}
               >
-                <DeleteIcon className="w-6 h-6 cursor-pointer" />
+                <MdDeleteOutline className="w-6 h-6 cursor-pointer text-[#9588e8]" />
               </Button>
             </TooltipTrigger>
             <TooltipContent

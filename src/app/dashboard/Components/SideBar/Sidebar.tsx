@@ -4,21 +4,29 @@ import logoImage from "../../../../assets/images/logosaas.png";
 import { useGlobalContext } from "@/ContextApi";
 import { getLanguageIcon } from "@/app/localData/LanguageTextToIcon";
 import TagsWindow from "../ContentArea/TagsWIndow/TagsWindow";
+import { useState } from "react";
+import { useClerk } from "@clerk/nextjs";
 
 const Sidebar = () => {
   const {
     sideBarMenuObject: { sideBarMenu, setSideBarMenu },
     darkModeObject: { darkMode },
-    openSideBarObject: { openSideBar, setOpenSideBar },
+    openSideBarObject: { openSideBar},
     codeLanguageCOunterObject: {
       codeLanguagesCounter,
-      setCodeLanguagesCounter,
     },
-    tagsAndLogoutMenuObject: { tagsAndLogoutMenu, setTagsAndLogoutMenu },
+    tagsAndLogoutMenuObject: { tagsAndLogoutMenu},
     openTagsWindowObject: { openTagsWindow, setOpenTagsWindow },
   } = useGlobalContext();
-  // console.log(sideBarMenu);
-  // console.log("sidebar:", darkMode);
+
+  const { signOut } = useClerk()
+
+  const [hoveredQuickLinks, setHoveredQuickLinks] = useState<number | null>(
+    null
+  );
+  const [hoveredTagAndLogout, setHoveredTagAndLogout] = useState<number | null>(
+    null
+  );
 
   function clickedMenu(index: number) {
     const updatedSideBarMenu = sideBarMenu.map((menu, i) => {
@@ -47,7 +55,7 @@ const Sidebar = () => {
 
   const handleLogout = () => {
     // Implement your logout logic here
-    console.log("Logging out...");
+    signOut({ redirectUrl: '/' })
   };
 
   return (
@@ -91,42 +99,103 @@ const Sidebar = () => {
         >
           Quick Links
         </div>
+
         <ul className="grid gap-2">
-          {sideBarMenu.map((link, index) => (
-            <li
-              key={index}
-              onClick={() => clickedMenu(index)}
-              className={`flex items-center gap-2 px-3 pr-10 py-2 ${
-                link.isSelected ? "bg-[#9588e8] text-white" : "text-black"
-              } hover:bg-[#9588e8] w-full rounded-lg`}
-            >
-              {link.icon}
-              <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>
-                {link.name}
-              </span>
-            </li>
-          ))}
+          {sideBarMenu.map((link, index) => {
+            const isHovered = hoveredQuickLinks === index;
+            const isSelected = link.isSelected;
+
+            return (
+              <li
+                key={index}
+                onClick={() => clickedMenu(index)}
+                onMouseEnter={() => setHoveredQuickLinks(index)}
+                onMouseLeave={() => setHoveredQuickLinks(null)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                  padding: "0.5rem 0.75rem",
+                  paddingRight: "2.5rem",
+                  width: "100%",
+                  borderRadius: "0.5rem",
+                  backgroundColor: isSelected
+                    ? "#9588e8"
+                    : isHovered
+                    ? "#9588e8"
+                    : "transparent",
+                  color: isSelected || isHovered ? "white" : "inherit",
+                  cursor: "pointer",
+                }}
+              >
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    color: isSelected || isHovered ? "white" : "#9588e8",
+                  }}
+                >
+                  {link.icon}
+                </span>
+                <span
+                  style={{
+                    color:
+                      isSelected || isHovered
+                        ? "white"
+                        : darkMode[1].isSelected
+                        ? "white"
+                        : "black",
+                  }}
+                >
+                  {link.name}
+                </span>
+              </li>
+            );
+          })}
         </ul>
+
         <ul className="grid gap-2">
-          {tagsAndLogoutMenu.map((link, index) => (
+          {tagsAndLogoutMenu.map((link, index) => {
+            const isHovered = hoveredTagAndLogout === index;
+            const isSelected = link.isSelected;
 
-            <li
-              key={index}
-              onClick={() => clickedTagsMenu(index)}
-              className={`flex items-center gap-2 px-3 pr-10 py-2 ${
-                link.isSelected ? "bg-[#9588e8] text-white" : "text-black"
-              } hover:bg-[#9588e8] w-full rounded-lg`}
-            >
-              {link.icon}
-              <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>
-                {link.name}
-              </span>
-            </li>
-          ))}
+            return (
+              <li
+                key={index}
+                onClick={() => clickedTagsMenu(index)}
+                onMouseEnter={() => setHoveredTagAndLogout(index)}
+                onMouseLeave={() => setHoveredTagAndLogout(null)}
+                className={`
+              flex items-center gap-2 px-3 pr-10 py-2 w-full rounded-lg
+              ${isSelected ? "bg-[#9588e8]" : ""}
+              ${isHovered || isSelected ? "text-white" : ""}
+              hover:bg-[#9588e8]
+              
+            `}
+              >
+                <span
+                  className={`
+              ${isHovered || isSelected ? "text-white" : "text-[#9588e8]"}
+            `}
+                >
+                  {link.icon}
+                </span>
+                <span
+                  className={`
+              ${darkMode[1].isSelected ? "text-white" : ""}
+              ${isHovered || isSelected ? "text-white" : ""}
+              
+            `}
+                >
+                  {link.name}
+                </span>
+              </li>
+            );
+          })}
         </ul>
 
-        {openTagsWindow && <TagsWindow/>}
-
+        {openTagsWindow && <TagsWindow />}
       </nav>
       <div className="mt-10 space-y-4">
         {codeLanguagesCounter.length > 0 && (
@@ -144,11 +213,13 @@ const Sidebar = () => {
               {codeLanguagesCounter.map((language, index) => (
                 <li
                   key={index}
-                  className="flex items-center px-3 py-2 justify-between hover:bg-violet-200 rounded"
+                  className="flex items-center px-3 py-2 justify-between rounded"
                 >
                   <div className="flex items-center gap-2">
-                  {getLanguageIcon(capitalizeFistOccurance(language.language))}
-                    <span>{capitalizeFistOccurance(language.language)}</span>
+                    {getLanguageIcon(
+                      capitalizeFistOccurance(language.language)
+                    )}
+                    <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>{capitalizeFistOccurance(language.language)}</span>
                   </div>
                   <span className="text-xs bg-gray-200 px-2 py-1 rounded">
                     {language.count}
@@ -175,7 +246,7 @@ const Sidebar = () => {
 };
 
 export default Sidebar;
-//write the function 
+//write the function
 function capitalizeFistOccurance(str: string) {
   if (!str) return str;
   for (let i = 0; i < str.length; i++) {

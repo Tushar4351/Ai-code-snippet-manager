@@ -35,7 +35,7 @@ const AddSnippetButton = () => {
     allNotesObject: { allNotes, setAllNotes },
     selectedNoteObject: { setSelectedNote },
     isNewNoteObject: { setIsNewNote },
-    sharedUserIdObject:{sharedUserId, setSharedUserId}
+    sharedUserIdObject:{sharedUserId}
   } = useGlobalContext();
 
   return (

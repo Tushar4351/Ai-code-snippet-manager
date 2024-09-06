@@ -15,7 +15,9 @@ export async function POST(req: Request) {
       createdAt,
       isDeleted,
     } = await req.json();
+    
     await connectToDatabase();
+
     const note = new SingleSnippet({
       clerkUserId,
       title,
@@ -44,15 +46,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ message: "Error saving note" }, { status: 400 });
   }
 }
+
 //generate the PUT method
 export async function PUT(req: Request) {
   try {
     const url = new URL(req.url);
     const snippetId = url.searchParams.get("snippetId");
-    console.log("response snippetId", snippetId);
+    
     const { title, isImportant, tags, description, code, language, isDeleted } =
       await req.json();
-    //console.log("response", req.json());
 
     await connectToDatabase();
 
@@ -119,7 +121,7 @@ export async function DELETE(request: Request) {
     const snippetToDelete = await SingleSnippet.findOneAndDelete({
       _id: snippetId,
     });
-    console.log("snippetToDelete snippet:", snippetToDelete);
+
     if (!snippetToDelete) {
       return NextResponse.json(
         { message: "Snippet not found" },

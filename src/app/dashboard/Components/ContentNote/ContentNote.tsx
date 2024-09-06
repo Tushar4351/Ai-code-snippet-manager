@@ -81,7 +81,7 @@ const ContentNote = () => {
     darkModeObject: { darkMode },
     isNewNoteObject: { isNewNote, setIsNewNote },
     allNotesObject: { allNotes, setAllNotes },
-    selectedLanguageObject: { selectedLanguage, setSelectedLanguage },
+    selectedLanguageObject: { selectedLanguage },
   } = useGlobalContext();
 
   const [singleNote, setSingleNote] = useState<SingleNoteType | undefined>(
@@ -193,7 +193,6 @@ const ContentNoteHeader = ({
 }) => {
   const {
     allNotesObject: { allNotes, setAllNotes },
-    openContentNoteObject: { setOpenContentNote },
     isNewNoteObject: { isNewNote, setIsNewNote },
     darkModeObject: { darkMode },
   } = useGlobalContext();
@@ -337,6 +336,7 @@ const TagsMenu = ({
   const {
     allTagsObject: { allTags },
     selectedTagObject: { selectedTags },
+    darkModeObject: { darkMode },
   } = useGlobalContext();
 
   return (
@@ -344,15 +344,21 @@ const TagsMenu = ({
       <DropdownMenuTrigger>
         <EditSectionIcon className="cursor-pointer w-6 h-6" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col gap-1">
+      <DropdownMenuContent
+        className={`flex flex-col gap-1 ${
+          darkMode[1].isSelected ? "bg-[#1f1e25] border-none" : ""
+        }`}
+      >
         {allTags.map((tag) => (
           <DropdownMenuItem
             onClick={() => onClickedTag(tag)}
             className={`${
               selectedTags.some(
-                (t) => t.name.toLowerCase() === tag.name.toLocaleLowerCase()
+                (t) => t.name.toLowerCase() === tag.name.toLowerCase()
               )
                 ? "bg-[#d5d0f8] text-[#9588e8]"
+                : darkMode[1].isSelected
+                ? "text-white"
                 : ""
             }`}
             key={tag._id}
@@ -364,6 +370,7 @@ const TagsMenu = ({
     </DropdownMenu>
   );
 };
+
 
 const Description = ({
   singleNote,
@@ -556,7 +563,9 @@ const CodeBlock = ({
                 language.name.toLocaleLowerCase()
                   ? "bg-slate-200"
                   : ""
-              } gap-2 hover:bg-slate-200 bg-transparent p-[6px] rounded-md items-center cursor-pointer`}
+              } gap-2
+              ${darkMode[1].isSelected ? "hover:bg-[#1f1e25]" : "hover:bg-slate-200"
+              }  bg-transparent p-[6px] rounded-md items-center cursor-pointer`}
             >
               {language.icon}
               <span className="mt-[1px]">{language.name}</span>
