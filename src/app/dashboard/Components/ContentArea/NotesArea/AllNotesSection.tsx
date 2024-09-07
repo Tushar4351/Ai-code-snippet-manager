@@ -41,7 +41,7 @@ const AllNotesSection = () => {
     tagsClickedObject: { tagsClicked, setTagsClicked },
     isLoadingObject: { isLoading, setIsLoading },
   } = useGlobalContext();
-  //console.log(allNotes);
+  console.log(allNotes);
 
   const filterIsDeletedNotes = () => {
     return allNotes.filter((note) => note.isDeleted === false);
@@ -108,7 +108,7 @@ const AllNotesSection = () => {
 
       setFilteredNotes(filteredDeletedNotes);
     }
-  }, [sideBarMenu]);
+  }, [sideBarMenu,setFilteredNotes]);
   if (isLoading) {
     return (
       <div className=" mt-5 flex flex-wrap gap-4">
@@ -123,10 +123,10 @@ const AllNotesSection = () => {
       <div className="h-[380px] w-[300px] bg-slate-200 rounded-md flex flex-col">
         <div className=" flex justify-between px-5 pt-5">
           {" "}
-          <div className="w - 1 / 2 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
-          <div className="w - 7 h - 7 bg - slate - 300 rounded - sm"></div>{" "}
+          <div className="w-1/2 h-7 bg-slate-300 rounded-sm"></div>{" "}
+          <div className="w-7 h-7 bg-slate-300 rounded-sm"></div>{" "}
         </div>
-        <div className="h - [230px] mt - 12 w - full bg - slate - 300 "></div>{" "}
+        <div className="h-[230px] mt-12 w-full bg-slate-300 "></div>{" "}
       </div>
     );
   }
@@ -408,7 +408,7 @@ const NoteDate = ({ createdAt }: { createdAt: string }) => {
 const NoteTags = ({ tags }: { tags: SingleTagType[] }) => {
   return (
     <div className="flex flex-wrap mx-4 text-[11px] gap-1 mt-4 text-gray-400">
-      {tags.map((tag,index) => (
+      {tags.map((tag, index) => (
         <span
           key={index}
           className="p-1 rounded-md px-2 bg-[#d5d0f8] text-[#9588e8]"
@@ -491,9 +491,7 @@ const NotFooter = ({
       const updatedNote = await response.json();
 
       setAllNotes((prevNotes) =>
-        prevNotes.map((n) =>
-          n._id === note._id ? { ...note, isImportant: true } : n
-        )
+        prevNotes.map((n) => (n._id === note._id ? { ...note } : n))
       );
 
       toast({
@@ -563,9 +561,7 @@ const NotFooter = ({
       const updatedNote = await response.json();
 
       setAllNotes((prevNotes) =>
-        prevNotes.map((n) =>
-          n._id === note._id ? { ...note, isImportant: false } : n
-        )
+        prevNotes.map((n) => (n._id === note._id ? { ...note } : n))
       );
 
       toast({

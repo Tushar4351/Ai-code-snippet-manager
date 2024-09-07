@@ -45,7 +45,6 @@ const Sidebar = () => {
     }));
 
     //setTagsAndLogoutMenu(updatedMenu);
-    console.log(updatedMenu[index].name);
     if (updatedMenu[index].name === "Tags") {
       setOpenTagsWindow(true);
     } else if (updatedMenu[index].name === "Log Out") {

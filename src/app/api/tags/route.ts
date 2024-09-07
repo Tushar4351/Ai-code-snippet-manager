@@ -19,12 +19,33 @@ export async function GET(req: any) {
     const clerkId = req.nextUrl.searchParams.get("clerkId");
     await connectToDatabase();
     const tags = await Tag.find({ clerkUserId: clerkId });
+
     return NextResponse.json({ tags: tags });
   } catch (error) {
     return NextResponse.json({ error: error }, { status: 400 });
   }
 }
+export async function PUT(request: Request) {
+  try {
+    const { id, name } = await request.json();
 
+    await connectToDatabase();
+    const updatedTag = await Tag.findByIdAndUpdate(id, { name }, { new: true });
+
+    if (!updatedTag) {
+      console.log("Tag not found:", id);
+      return NextResponse.json({ error: "Tag not found" }, { status: 404 });
+    }
+    
+    return NextResponse.json(updatedTag);
+  } catch (error) {
+    console.error("Error updating tag:", error);
+    return NextResponse.json(
+      { error: "Failed to update tag" },
+      { status: 500 }
+    );
+  }
+}
 export async function DELETE(request: Request) {
   try {
     const url = new URL(request.url);

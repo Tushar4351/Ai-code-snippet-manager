@@ -1,19 +1,16 @@
+import React, { useEffect, useRef, useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import ErrorIcon from "../../../../../assets/icons/error.svg";
-import { toast } from "@/components/ui/use-toast";
 import { useGlobalContext } from "@/ContextApi";
-import { useEffect, useRef, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import ErrorIcon from "../../../../../assets/icons/error.svg";
+import { Button } from "@/components/ui/button";
 
 const AddTagWindow = () => {
   const {
@@ -22,27 +19,34 @@ const AddTagWindow = () => {
     allNotesObject: { allNotes, setAllNotes },
     selectedTagToEditObject: { selectedTagToEdit, setSelectedTagToEdit },
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
-    sharedUserIdObject:{sharedUserId, }
+    sharedUserIdObject: { sharedUserId },
   } = useGlobalContext();
 
   const [tagName, setTagName] = useState("");
-  const [placeholder, setPlaceHolder] = useState("");
-  const [errorMassage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  //write a function of oninputchange
   const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
     setErrorMessage("");
-    setTagName(newValue);
+    setTagName(e.target.value);
   };
-  // Reset the form when the openTagsWindow state change
+
   useEffect(() => {
     if (openNewTagsWindow) {
       setTagName("");
       setErrorMessage("");
     }
   }, [openNewTagsWindow]);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [errorMessage]);
+
+  useEffect(() => {
+    if (selectedTagToEdit) {
+      setTagName(selectedTagToEdit.name);
+    }
+  }, [selectedTagToEdit]);
 
   function handleClickedTag() {
     // Check if the tag already exists
@@ -52,7 +56,13 @@ const AddTagWindow = () => {
     }
     if (!allTags.some((tag) => tag.name === tagName)) {
       if (!selectedTagToEdit) {
-        addNewTagFunction(allTags, setAllTags, setOpenNewTagsWindow, tagName,sharedUserId);
+        addNewTagFunction(
+          allTags,
+          setAllTags,
+          setOpenNewTagsWindow,
+          tagName,
+          sharedUserId
+        );
       } else {
         handleEditTag(
           allTags,
@@ -69,57 +79,51 @@ const AddTagWindow = () => {
       setErrorMessage("Tag already exists");
     }
   }
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [errorMassage, setErrorMessage]);
 
-  useEffect(() => {
-    if (selectedTagToEdit) {
-      setTagName(selectedTagToEdit.name);
-    }
-  }, [selectedTagToEdit]);
   return (
-    <AlertDialog
-      open={openNewTagsWindow}
-      //onOpenChange={setOpenConfirmationWindow}
-    >
+    <AlertDialog open={openNewTagsWindow} onOpenChange={setOpenNewTagsWindow}>
       <AlertDialogContent
-        className={`${darkMode[1].isSelected ? "bg-[#151419]" : "bg-white"}`}
+        className={`${
+          darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"
+        } border-none`}
       >
         <AlertDialogHeader>
-          <AlertDialogTitle
-            className={`${darkMode[1].isSelected ? "text-white" : ""}`}
-          >
+          <AlertDialogTitle>
             {selectedTagToEdit ? "Edit Tag" : "Add New Tag"}
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-400">
-            <span className="font-semibold">Tag Name</span>
+          <AlertDialogDescription>
+            <span className="font-semibold text-gray-400">Tag Name</span>
             <input
               ref={inputRef}
               value={tagName}
-              onChange={(e) => onInputChange(e)}
-              placeholder={placeholder}
+              onChange={onInputChange}
+              placeholder="Enter tag name"
               className={`outline-none ${
-                darkMode[1].isSelected ? "bg-[#1f1e25]" : "bg-white border"
-              } text-gray-500 text-sm w-full rounded-md p-2 mt-1`}
+                darkMode[1].isSelected
+                  ? "bg-[#1f1e25] text-white"
+                  : "bg-white text-gray-700 border"
+              } text-sm w-full rounded-md p-2 mt-1`}
             />
-            {errorMassage.length > 0 && (
-              <div className="text-red-500 text-sm flex gap-1 items-center  mt-2">
+            {errorMessage && (
+              <div className="text-red-500 text-sm flex gap-1 items-center mt-2">
                 <ErrorIcon className="w-4 h-4" />
-                <span className="text-red-500 text-sm">{errorMassage}</span>
+                <span>{errorMessage}</span>
               </div>
             )}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel
+          <Button
             onClick={() => {
               setOpenNewTagsWindow(false);
               setSelectedTagToEdit(null);
             }}
+            variant="outline"
+            className={`mt-2 sm:mt-0 ${
+          darkMode[1].isSelected ?"text-black":""}`}
           >
             Cancel
-          </AlertDialogCancel>
+          </Button>
           <AlertDialogAction
             className="bg-[#9588e8] hover:bg-[#9f93ee]"
             onClick={handleClickedTag}
@@ -149,7 +153,7 @@ async function addNewTagFunction(
   try {
     const response = await fetch("/api/tags", {
       method: "POST",
-      headers: { "Content-Type": "application/json", },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTag),
     });
     if (!response.ok) {
@@ -160,11 +164,11 @@ async function addNewTagFunction(
       throw new Error(data.error);
     }
     const addedTag: SingleTagType = {
-      _id: data.tags.id,
+      _id: data.tags._id,
       name: data.tags.name,
       clerkUserId: data.tags.clerkUserId,
     };
-    setAllTags((prevTags)=>[...prevTags, addedTag]);
+    setAllTags((prevTags) => [...prevTags, addedTag]);
     setOpenNewTagsWindow(false);
     toast({
       title: "Tag has been Added Successfully",
@@ -173,7 +177,8 @@ async function addNewTagFunction(
     console.log(error);
   }
 }
-function handleEditTag(
+
+async function handleEditTag(
   allTags: SingleTagType[],
   setAllTags: (value: React.SetStateAction<SingleTagType[]>) => void,
   setOpenNewTagsWindow: (value: React.SetStateAction<boolean>) => void,
@@ -185,34 +190,66 @@ function handleEditTag(
   allNotes: SingleNoteType[],
   setAllNotes: (value: React.SetStateAction<SingleNoteType[]>) => void
 ) {
-  // Update all tags
-  const updateAllTags = allTags.map((tag) =>
-    tag._id === selectedTagToEdit?._id ? { ...tag, name: tagName } : tag
-  );
+  try {
+    // Update the tag in the database
+    const response = await fetch("/api/tags", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: selectedTagToEdit._id,
+        name: tagName,
+      }),
+    });
 
-  // Update all notes with the new tag name
-  const updatedNotes = allNotes.map((note) => {
-    if (
-      note.tags.some(
-        (tag) =>
-          tag.name.toLowerCase() === selectedTagToEdit?.name.toLowerCase()
-      )
-    ) {
-      return {
-        ...note,
-        tags: note.tags.map((tag) =>
-          tag.name.toLowerCase() === selectedTagToEdit?.name.toLowerCase()
-            ? { ...tag, name: tagName }
-            : tag
-        ),
-      };
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(
+        errorData.message || "Failed to update tag in the database"
+      );
     }
-    return note;
-  });
 
-  // Update state
-  setAllTags(updateAllTags);
-  setAllNotes(updatedNotes);
-  setSelectedTagToEdit(null);
-  setOpenNewTagsWindow(false);
+    const updatedTagData = await response.json();
+
+    // Update all tags in the frontend state
+    const updatedAllTags = allTags.map((tag) =>
+      tag._id === selectedTagToEdit._id ? { ...tag, name: tagName } : tag
+    );
+
+    // Update all notes with the new tag name
+    const updatedNotes = allNotes.map((note) => {
+      if (
+        note.tags.some(
+          (tag) =>
+            tag.name.toLowerCase() === selectedTagToEdit.name.toLowerCase()
+        )
+      ) {
+        return {
+          ...note,
+          tags: note.tags.map((tag) =>
+            tag.name.toLowerCase() === selectedTagToEdit.name.toLowerCase()
+              ? { ...tag, name: tagName }
+              : tag
+          ),
+        };
+      }
+      return note;
+    });
+
+    // Update state
+    setAllTags(updatedAllTags);
+    setAllNotes(updatedNotes);
+    setSelectedTagToEdit(null);
+    setOpenNewTagsWindow(false);
+
+    // Show success toast
+    toast({
+      title: "Tag has been updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating tag:", error);
+    toast({
+      title: "Failed to update tag",
+      variant: "destructive",
+    });
+  }
 }

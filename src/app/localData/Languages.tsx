@@ -11,14 +11,14 @@ import KotlinIcon from "../../assets/icons/kotlin.svg";
 import ReactIcon from "../../assets/icons/react.svg";
 import RustIcon from "../../assets/icons/rust.svg";
 import SwiftIcon from "../../assets/icons/swift.svg";
-import TypeScriptIcon from "../../assets/icons/typescript.svg";
+import { TbBrandTypescript } from "react-icons/tb";
 import { v4 as uuidv4 } from "uuid";
 
 export const allLanguages = [
   {
     id: uuidv4(),
     name: "JavaScript",
-    icon: <JavascriptIcon className="h-6 w-6 mr-1" />,
+    icon: <JavascriptIcon className="h-6 w-6 " />,
   },
   {
     id: uuidv4(),
@@ -83,6 +83,6 @@ export const allLanguages = [
   {
     id: uuidv4(),
     name: "TypeScript",
-    icon: <TypeScriptIcon className="h-6 w-6 mr-1" />,
+    icon: <TbBrandTypescript className="h-6 w-6" />,
   },
 ];

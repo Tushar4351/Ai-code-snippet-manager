@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import PlusIcon from "../../../assets/icons/plus.svg";
 import { v4 as uuidv4 } from "uuid";
 import { useGlobalContext } from "@/ContextApi";
+import { toast } from "@/components/ui/use-toast";
+
 const EmptyPlaceHolder = ({
   Icon,
   Text,
@@ -16,7 +18,7 @@ const EmptyPlaceHolder = ({
     allNotesObject: { allNotes, setAllNotes },
     selectedNoteObject: { setSelectedNote },
     isNewNoteObject: { setIsNewNote },
-    sharedUserIdObject: { sharedUserId, setSharedUserId },
+    sharedUserIdObject: { sharedUserId },
   } = useGlobalContext();
 
   return (
@@ -37,9 +39,10 @@ const EmptyPlaceHolder = ({
             )
           }
         >
-          {" "}
-          <PlusIcon />
-          Add a new Snippet
+          <span className="flex items-center">
+            <PlusIcon className="mr-2" />
+            Add a new Snippet
+          </span>
         </Button>
       )}
     </div>
@@ -56,29 +59,36 @@ export function openTheContentNote(
   allNotes: SingleNoteType[],
   sharedUserId: string
 ) {
-  const newSingleNote = {
-    _id: uuidv4(),
-    clerkUserId: sharedUserId || "",
-    title: "",
-    createdAt: formatDate(new Date()),
-    tags: [],
-    description: "",
-    code: "",
-    isImportant: false,
-    language: "",
-    isDeleted: false,
-  };
+  try {
+    const newSingleNote = {
+      _id: uuidv4(),
+      clerkUserId: sharedUserId || "",
+      title: "",
+      createdAt: formatDate(new Date()),
+      tags: [],
+      description: "",
+      code: "",
+      isImportant: false,
+      language: "",
+      isDeleted: false,
+    };
 
-  setAllNotes([newSingleNote, ...allNotes]);
-  setSelectedNote(newSingleNote);
-  setOpenContentNote(true);
-  setIsNewNote(true);
+    setAllNotes([newSingleNote, ...allNotes]);
+    setSelectedNote(newSingleNote);
+    setOpenContentNote(true);
+    setIsNewNote(true);
+    console.log("newSingleNote :", newSingleNote);
+    console.log("allNotes:", allNotes);
+  } catch (error) {
+    console.error("Error creating a new note:", error);
+    toast({
+      title: "Failed to create a new snippe",
+      variant: "destructive",
+    });
+  }
 }
 
-// ... rest of the component
-
 function formatDate(date: Date) {
-  //format the date to dd month yyyy
   const options: Intl.DateTimeFormatOptions = {
     day: "numeric",
     month: "short",

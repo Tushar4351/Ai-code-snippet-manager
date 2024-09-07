@@ -87,6 +87,8 @@ const ContentNote = () => {
   const [singleNote, setSingleNote] = useState<SingleNoteType | undefined>(
     undefined
   );
+  console.log("openContentNote", openContentNote);
+  console.log("selectedNote", selectedNote);
   useEffect(() => {
     if (openContentNote) {
       if (selectedNote) {
@@ -94,8 +96,11 @@ const ContentNote = () => {
       }
     }
   }, [openContentNote, selectedNote]);
+
   useEffect(() => {
+    console.log("singleNote", singleNote);
     if (singleNote && singleNote.title !== "") {
+      console.log("isNewNote", isNewNote);
       debouncedSaveNote(singleNote, isNewNote);
     }
   }, [singleNote, isNewNote]);
@@ -371,7 +376,6 @@ const TagsMenu = ({
   );
 };
 
-
 const Description = ({
   singleNote,
   setSingleNote,
@@ -564,7 +568,10 @@ const CodeBlock = ({
                   ? "bg-slate-200"
                   : ""
               } gap-2
-              ${darkMode[1].isSelected ? "hover:bg-[#1f1e25]" : "hover:bg-slate-200"
+              ${
+                darkMode[1].isSelected
+                  ? "hover:bg-[#1f1e25]"
+                  : "hover:bg-slate-200"
               }  bg-transparent p-[6px] rounded-md items-center cursor-pointer`}
             >
               {language.icon}

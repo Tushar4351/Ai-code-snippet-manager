@@ -21,7 +21,7 @@ import {
 
 const TagsWindow = () => {
   const {
-    openTagsWindowObject: { openTagsWindow},
+    openTagsWindowObject: { openTagsWindow },
     darkModeObject: { darkMode },
   } = useGlobalContext();
   const [searchQuery, setSearchQuery] = useState("");
@@ -81,7 +81,7 @@ function SearchBar({
 }) {
   const {
     openNewTagsWindowObject: { openNewTagsWindow, setOpenNewTagsWindow },
-    openTagsWindowObject: { openTagsWindow},
+    openTagsWindowObject: { openTagsWindow },
     darkModeObject: { darkMode },
   } = useGlobalContext();
 
@@ -123,8 +123,7 @@ function SearchBar({
 function TagsList({ searchQuery }: { searchQuery: string }) {
   const {
     darkModeObject: { darkMode },
-    allTagsObject: { allTags},
-  
+    allTagsObject: { allTags },
   } = useGlobalContext();
 
   const filterAllItemsFromAllTags = allTags.filter((tag) => tag.name != "All");
@@ -132,6 +131,7 @@ function TagsList({ searchQuery }: { searchQuery: string }) {
   const filterAllTagsBasedOnSearchQuery = filterAllItemsFromAllTags.filter(
     (tag) => tag.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   return (
     <div
       className={`rounded-md p-4 ${
@@ -173,6 +173,7 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
     openNewTagsWindowObject: { setOpenNewTagsWindow },
     tagsClickedObject: { tagsClicked, setTagsClicked },
   } = useGlobalContext();
+
   function openTagWindow(tag: SingleTagType) {
     setOpenNewTagsWindow(true);
     setSelectedTagToEdit(tag);
@@ -203,7 +204,10 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
         </div>
       </div>
       <div className="flex gap-2 items-center">
-        <div className="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer ">
+        <div
+          className="rounded-full w-7 h-7 flex items-center justify-center cursor-pointer "
+          onClick={() => openTagWindow(tag)}
+        >
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -214,10 +218,7 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
                       : "bg-white hover:bg-gray-200"
                   }  border-none rounded-full p-2 h-8`}
                 >
-                  <RiEditCircleLine
-                    className="text-[#9588e8] h-4 w-4"
-                    onClick={() => openTagWindow(tag)}
-                  />
+                  <RiEditCircleLine className="text-[#9588e8] h-4 w-4" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent
@@ -250,7 +251,7 @@ function SingleTag({ tag }: { tag: SingleTagType }) {
                 <Button
                   className={`${
                     darkMode[1].isSelected
-                         ? "bg-[#1f1e25] hover:bg-gray-800"
+                      ? "bg-[#1f1e25] hover:bg-gray-800"
                       : "bg-white hover:bg-gray-200"
                   }  border-none rounded-full p-2 h-8`}
                 >
@@ -353,5 +354,9 @@ const deleteTag = async (
     });
   } catch (error) {
     console.log(error);
+    toast({
+      title: "Failed to Delete tag",
+      variant: "destructive",
+    });
   }
 };

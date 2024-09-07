@@ -332,6 +332,8 @@ export default function GlobalContextProvider({
           };
           const tempAllTags = [allTags, ...data.tags];
           setAllTags(tempAllTags);
+        
+          
         }
       } catch (error) {
         console.error("Error tags:", error); // Log the error to understand failures

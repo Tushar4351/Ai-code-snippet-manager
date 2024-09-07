@@ -11,39 +11,39 @@ import KotlinIcon from "../../assets/icons/kotlin.svg";
 import ReactIcon from "../../assets/icons/react.svg";
 import RustIcon from "../../assets/icons/rust.svg";
 import SwiftIcon from "../../assets/icons/swift.svg";
-import TypeScriptIcon from "../../assets/icons/typescript.svg";
+import { TbBrandTypescript } from "react-icons/tb";
 
 export const getLanguageIcon = (language: string) => {
-    switch (language) {
-      case 'JavaScript':
-        return <JavascriptIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'C':
-        return <CIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Java':
-        return <JavaIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'C++':
-        return <CppIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Python':
-        return <PythonIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'C#':
-        return <CSharpIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Go':
-        return <GoIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'PHP':
-        return <PhpIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Ruby':
-        return <RubyIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Kotlin':
-        return <KotlinIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'React':
-        return <ReactIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Rust':
-        return <RustIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'Swift':
-        return <SwiftIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      case 'TypeScript':
-        return <TypeScriptIcon className="h-6 w-6 mb-[2px] mr-1" />;
-      default:
-        return null;
-    }
-  };
+  switch (language) {
+    case "JavaScript":
+      return <JavascriptIcon className="h-6 w-6 " />;
+    case "C":
+      return <CIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Java":
+      return <JavaIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "C++":
+      return <CppIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Python":
+      return <PythonIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "C#":
+      return <CSharpIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Go":
+      return <GoIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "PHP":
+      return <PhpIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Ruby":
+      return <RubyIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Kotlin":
+      return <KotlinIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "React":
+      return <ReactIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Rust":
+      return <RustIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "Swift":
+      return <SwiftIcon className="h-6 w-6 mb-[2px] mr-1" />;
+    case "TypeScript":
+      return <TbBrandTypescript className="h-6 w-6  text-[#9588e8]" />;
+    default:
+      return null;
+  }
+};
