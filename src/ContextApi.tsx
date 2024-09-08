@@ -109,6 +109,7 @@ interface GlobalContextType {
     sharedUserId: string;
     setSharedUserId: React.Dispatch<React.SetStateAction<string>>;
   };
+  sidebarContext: SidebarContextProps;
 }
 const ContextProvider = createContext<GlobalContextType>({
   sideBarMenuObject: {
@@ -190,6 +191,11 @@ const ContextProvider = createContext<GlobalContextType>({
   sharedUserIdObject: {
     sharedUserId: "",
     setSharedUserId: () => {},
+  },
+  sidebarContext: {
+    open: false,
+    setOpen: () => {},
+    animate: true,
   },
 });
 
@@ -273,7 +279,16 @@ export default function GlobalContextProvider({
   const [isLoading, setIsLoading] = useState(false);
   const { isLoaded, user } = useUser();
   const [sharedUserId, setSharedUserId] = useState<string>("");
+  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
+  const [animateSidebar, setAnimateSidebar] = useState<boolean>(true);
   const { isSignedIn, userId } = useAuth();
+
+  // Sidebar context state management
+  const sidebarContextValue: SidebarContextProps = {
+    open: openSidebar,
+    setOpen: setOpenSidebar,
+    animate: animateSidebar,
+  };
 
   const handleResize = () => {
     setIsMobile(window.innerWidth <= 640);
@@ -419,6 +434,7 @@ export default function GlobalContextProvider({
         tagsClickedObject: { tagsClicked, setTagsClicked },
         isLoadingObject: { isLoading, setIsLoading },
         sharedUserIdObject: { sharedUserId, setSharedUserId },
+        sidebarContext: sidebarContextValue
       }}
     >
       {children}

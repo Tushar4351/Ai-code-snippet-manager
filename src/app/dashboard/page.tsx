@@ -6,7 +6,7 @@ const page = () => {
   return (
     <div className="flex h-screen w-full">
       <Sidebar />
-      <main className="w-full md:w-[90%]">
+      <main className="w-full">
         <ContentArea />
       </main>
     </div>

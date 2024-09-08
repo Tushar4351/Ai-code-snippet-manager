@@ -52,3 +52,8 @@ interface CodeLanguageCounterType {
   language: string;
   count: number;
 }
+interface SidebarContextProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  animate: boolean;
+}
