@@ -45,7 +45,7 @@ const TopBar = () => {
       {sideBarMenu[3].isSelected ? (
         <>
           <ProfileUser />
-          <CreditInformation darkmode={darkMode[1].isSelected}/>
+          <CreditInformation darkmode={darkMode[1].isSelected} />
           <div className="flex gap-4 items-center">
             <DarkMode />
             <SideBarMenuIcon />
@@ -82,7 +82,7 @@ const NotesArea = () => {
       >
         {sideBarMenu[3].isSelected ? (
           <>
-            <Pricing darkmode={darkMode[1].isSelected} />
+            <Pricing darkMode={darkMode[1].isSelected} />
           </>
         ) : (
           <>
@@ -95,5 +95,3 @@ const NotesArea = () => {
     </div>
   );
 };
-
-
