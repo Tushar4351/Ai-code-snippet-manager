@@ -8,7 +8,7 @@ import { TbTags,TbLogout2 } from "react-icons/tb";
 import { v4 as uuidv4 } from "uuid";
 import nightIcon from "./assets/icons/night.png";
 import sunIcon from "./assets/icons/sun.png";
-
+import { FaRegMoneyBill1 } from "react-icons/fa6";
 import { StaticImageData } from "next/image";
 import { useAuth, useUser } from "@clerk/nextjs";
 
@@ -226,6 +226,12 @@ export default function GlobalContextProvider({
       name: "Delete",
       isSelected: false,
       icon: <MdDeleteOutline className="w-6 h-6 cursor-pointer" />,
+    },
+    {
+      id: 3,
+      name: "Subscription",
+      isSelected: false,
+      icon: <FaRegMoneyBill1 className="w-6 h-6 cursor-pointer" />,
     },
   ]);
   const [darkMode, setDarkMode] = useState<DarkModeType[]>([

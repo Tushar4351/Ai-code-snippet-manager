@@ -48,7 +48,7 @@ const Sidebar = () => {
       ...item,
       isSelected: i === index,
     }));
-
+ 
     //setTagsAndLogoutMenu(updatedMenu);
     if (updatedMenu[index].name === "Tags") {
       setOpenTagsWindow(true);
@@ -80,7 +80,7 @@ const Sidebar = () => {
             <LogoIcon />
           )}
           <div className="mt-24 flex flex-col gap-3">
-            {sideBarMenu.map((link, idx) => (
+            {sideBarMenu.slice(0, 3).map((link, idx) => (
               <SidebarLink
                 key={idx}
                 link={link}
@@ -110,7 +110,7 @@ const Sidebar = () => {
             {codeLanguagesCounter.map((language, index) => (
               <li
                 key={index}
-                className="flex items-center px-3 py-2 justify-between rounded"
+                className="flex items-center px-3 justify-between rounded"
               >
                 <div className="flex items-center gap-2">
                   <LanguageLink
@@ -136,60 +136,30 @@ const Sidebar = () => {
               </li>
             ))}
           </div>
+         
         </div>
+        <div className=" flex flex-col">
+            <div className="flex flex-col">
+              {sideBarMenu[3] && (
+                <SidebarLink
+                  key={3}
+                  link={sideBarMenu[3]}
+                  index={3}
+                  hoveredQuickLinks={hoveredQuickLinks}
+                  setHoveredQuickLinks={setHoveredQuickLinks}
+                  clickedMenu={clickedMenu}
+                  darkMode={darkMode}
+                />
+              )}
+            </div>
+          </div>
       </SidebarBody>
     </SidebarM>
-    //
-    //   <div className="mt-10 space-y-4">
-    //     {codeLanguagesCounter.length > 0 && (
-    //       <>
-    //         <div
-    //           className={`${
-    //             darkMode[1].isSelected
-    //               ? "text-white text-lg font-semibold"
-    //               : "text-black text-lg font-semibold"
-    //           }`}
-    //         >
-    //           Languages
-    //         </div>
-    //         <ul className="grid gap-2">
-    //           {codeLanguagesCounter.map((language, index) => (
-    //             <li
-    //               key={index}
-    //               className="flex items-center px-3 py-2 justify-between rounded"
-    //             >
-    //               <div className="flex items-center gap-2">
-    //                 {getLanguageIcon(
-    //                   capitalizeFistOccurance(language.language)
-    //                 )}
-    //                 <span className={`${darkMode[1].isSelected ? "text-white" : ""}`}>{capitalizeFistOccurance(language.language)}</span>
-    //               </div>
-    //               <span className="text-xs bg-gray-200 px-2 py-1 rounded">
-    //                 {language.count}
-    //               </span>
-    //             </li>
-    //           ))}
-    //         </ul>
-    //       </>
-    //     )}
-    //   </div>
-    //   <div className="mt-10 space-y-4">
-    //     <div
-    //       className={` ${
-    //         darkMode[1].isSelected
-    //           ? "text-white text-lg font-semibold"
-    //           : "text-black text-lg font-semibold"
-    //       }`}
-    //     >
-    //       Credits
-    //     </div>
-    //   </div>
-    // </aside>
   );
 };
 
 export default Sidebar;
-//write the function
+
 function capitalizeFistOccurance(str: string) {
   if (!str) return str;
   for (let i = 0; i < str.length; i++) {

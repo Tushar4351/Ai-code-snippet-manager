@@ -31,7 +31,7 @@ interface SingleTagType {
   name: string;
 }
 interface SingleNoteType {
-_id: string;
+  _id: string;
   clerkUserId: string;
   title: string;
   isImportant: boolean;
@@ -56,4 +56,20 @@ interface SidebarContextProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   animate: boolean;
+}
+
+interface CheckoutTransactionParams {
+  plan: string;
+  credits: number;
+  amount: number;
+  buyerId: string;
+}
+
+interface CreateTransactionParams {
+  stripeId: string;
+  amount: number;
+  credits: number;
+  plan: string;
+  buyerId: string;
+  createdAt: Date;
 }

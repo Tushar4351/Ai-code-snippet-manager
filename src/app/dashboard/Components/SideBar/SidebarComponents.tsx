@@ -96,7 +96,7 @@ export const DesktopSidebar = ({
         className={`${
           openSideBar ? "fixed z-50 shadow-lg" : "hidden md:flex"
         } p-6 pt-7 flex-col  ${
-          darkMode[1].isSelected ? "bg-[#0c0b10]" : "bg-white border-r"
+          darkMode[1].isSelected ? "bg-[#0c0b10]" : "bg-white"
         } h-screen px-4 py-4 w-[250px] md:w-[75px] flex-shrink-0`}
         animate={{
           width: animate ? (open ? "250px" : "75px") : "250px",
@@ -202,7 +202,7 @@ export const LanguageLink = ({
   return (
     <div
       className={cn(
-        "flex items-center justify-start  group/sidebar py-2",
+        "flex items-center justify-start  group/sidebar py-1",
         className
       )}
       {...props}
@@ -220,3 +220,4 @@ export const LanguageLink = ({
     </div>
   );
 };
+

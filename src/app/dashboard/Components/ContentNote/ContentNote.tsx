@@ -87,8 +87,7 @@ const ContentNote = () => {
   const [singleNote, setSingleNote] = useState<SingleNoteType | undefined>(
     undefined
   );
-  console.log("openContentNote", openContentNote);
-  console.log("selectedNote", selectedNote);
+
   useEffect(() => {
     if (openContentNote) {
       if (selectedNote) {
