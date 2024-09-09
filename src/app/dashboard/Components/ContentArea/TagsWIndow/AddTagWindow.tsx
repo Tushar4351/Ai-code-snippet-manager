@@ -11,6 +11,8 @@ import {
 import { useGlobalContext } from "@/ContextApi";
 import ErrorIcon from "../../../../../assets/icons/error.svg";
 import { Button } from "@/components/ui/button";
+import { v4 as uuidv4 } from "uuid";
+import { toast } from "@/components/ui/use-toast";
 
 const AddTagWindow = () => {
   const {
