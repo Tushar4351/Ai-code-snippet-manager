@@ -36,9 +36,6 @@ const TopBar = () => {
     sideBarMenuObject: { sideBarMenu },
   } = useGlobalContext();
 
-  // console.log(sharedUserId);
-  // const user = await getUserById(sharedUserId);
-  // console.log(user);
   return (
     <div
       className={`${
