@@ -81,7 +81,7 @@ const Pricing = ({ darkMode }: { darkMode: boolean }) => {
 
               <div className="flex-shrink-0 pt-4">
                 {plan.name === "Free" ? (
-                  <Button variant="outline" className="w-full">
+                  <Button variant="outline" className="w-full text-black">
                     Free Consumable
                   </Button>
                 ) : (
