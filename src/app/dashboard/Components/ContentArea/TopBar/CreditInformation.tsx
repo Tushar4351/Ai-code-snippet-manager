@@ -19,13 +19,13 @@ const CreditInformation = ({ darkmode }: { darkmode: boolean }) => {
   }, [userId]);
   let newSnippetCredit = user && user.creditBalance;
 
-  let SnippetCredit = 10;
+  let SnippetCredit = newSnippetCredit;
 
   // Initialize AiCredit as half of SnippetCredit rounded down
   let AiCredit = SnippetCredit - Math.floor(SnippetCredit / 2);
 
   // Function to update credits dynamically
-  function updateCredits(newSnippetCredit: number) {
+  function updateCredits(SnippetCredit: number) {
     // Calculate the difference in SnippetCredit
     const difference = SnippetCredit - newSnippetCredit;
 
@@ -35,7 +35,7 @@ const CreditInformation = ({ darkmode }: { darkmode: boolean }) => {
     // Adjust AiCredit by the same difference
     AiCredit -= difference;
   }
-  updateCredits(newSnippetCredit);
+  updateCredits(SnippetCredit);
   return (
     <div className="flex gap-4 font-semibold">
       <div className="flex gap-2 items-center">
