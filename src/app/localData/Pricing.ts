@@ -31,3 +31,4 @@ export const plans = [
     ],
   },
 ];
+export const creditFee = -1;

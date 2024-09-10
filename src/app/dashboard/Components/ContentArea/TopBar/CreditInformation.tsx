@@ -37,27 +37,27 @@ const CreditInformation = ({ darkmode }: { darkmode: boolean }) => {
   }
   updateCredits(SnippetCredit);
   return (
-    <div className="flex gap-4 font-semibold">
+    <div className="flex flex-col md:flex-row gap-2 md:gap-4 font-semibold text-xs md:text-md">
       <div className="flex gap-2 items-center">
-        <MdCreditScore className="w-7 h-7 text-[#9588e8]" />
+        <MdCreditScore className="md:w-7 md:h-7 text-[#9588e8]" />
         <span className={`${darkmode ? "text-white" : ""}`}>
           Snippets Credit
         </span>
         <span
           className={`
-        bg-gray-200 p-1 px-3 rounded-lg text-[#6e5beb]`}
+        bg-gray-200 md:p-1 px-3 rounded-lg text-[#6e5beb] text-xs md:text-md`}
         >
           {SnippetCredit}
         </span>
       </div>
       <div className="flex gap-2 items-center">
-        <GiArtificialHive className="w-7 h-7 text-[#9588e8]" />
+        <GiArtificialHive className="md:w-7 md:h-7 text-[#9588e8]" />
         <span className={`${darkmode ? "text-white " : ""}`}>
           AI Generation
         </span>
         <span
           className={`
-        bg-gray-200 p-1 px-3 rounded-lg text-[#6e5beb]`}
+        bg-gray-200 md:p-1 px-3 rounded-lg text-[#6e5beb] text-xs md:text-md`}
         >
           {AiCredit}
         </span>

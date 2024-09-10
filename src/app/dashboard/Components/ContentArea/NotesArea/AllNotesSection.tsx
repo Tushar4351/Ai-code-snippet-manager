@@ -249,7 +249,7 @@ const SingleNote = ({ note }: { note: SingleNoteType }) => {
       className={`${
         darkMode[1].isSelected ? "bg-[#151419] text-white" : "bg-white"
       } ${
-        openContentNote ? "w-full mb-4" : "w-[366px]"
+        openContentNote ? "w-full mb-4" : "w-[366px] h-full"
       } max-sm:w-full rounded-lg py-4`}
     >
       <NoteHeader

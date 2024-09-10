@@ -58,7 +58,7 @@ const Pricing = ({ darkMode }: { darkMode: boolean }) => {
                     plan.name === "Free" ? "" : "text-[#9588e8]"
                   }`}
                 >
-                  {plan.price}
+                  {plan.price}$
                 </span>
                 <span className="text-gray-400 text-sm ml-1">/month</span>
               </div>
