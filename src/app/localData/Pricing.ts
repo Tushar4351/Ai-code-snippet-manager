@@ -32,3 +32,4 @@ export const plans = [
   },
 ];
 export const creditFee = -1;
+export const aiCreditFee = -1;

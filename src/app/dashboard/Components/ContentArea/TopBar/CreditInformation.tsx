@@ -17,25 +17,9 @@ const CreditInformation = ({ darkmode }: { darkmode: boolean }) => {
     };
     fetchUser();
   }, [userId]);
-  let newSnippetCredit = user && user.creditBalance;
-
-  let SnippetCredit = newSnippetCredit;
-
-  // Initialize AiCredit as half of SnippetCredit rounded down
-  let AiCredit = SnippetCredit - Math.floor(SnippetCredit / 2);
-
-  // Function to update credits dynamically
-  function updateCredits(SnippetCredit: number) {
-    // Calculate the difference in SnippetCredit
-    const difference = SnippetCredit - newSnippetCredit;
-
-    // Update SnippetCredit to the new value
-    SnippetCredit = newSnippetCredit;
-
-    // Adjust AiCredit by the same difference
-    AiCredit -= difference;
-  }
-  updateCredits(SnippetCredit);
+  let SnippetCredit = user && user.creditBalance;
+  const storedAiBalance = localStorage.getItem("snippetCredit");
+ 
   return (
     <div className="flex flex-col md:flex-row gap-2 md:gap-4 font-semibold text-xs md:text-md">
       <div className="flex gap-2 items-center">
@@ -59,7 +43,7 @@ const CreditInformation = ({ darkmode }: { darkmode: boolean }) => {
           className={`
         bg-gray-200 md:p-1 px-3 rounded-lg text-[#6e5beb] text-xs md:text-md`}
         >
-          {AiCredit}
+          {storedAiBalance}
         </span>
       </div>
     </div>

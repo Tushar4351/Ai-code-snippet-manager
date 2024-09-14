@@ -6,7 +6,7 @@ const Banner = () => {
       <div className="container">
         <p>
           <span className="hidden sm:inline">Enhance Your Coding with AI Code Snippets - </span>
-          <a href="#" className="underline underline-offset-4 font-medium">
+          <a href="/dashboard" className="underline underline-offset-4 font-medium">
             Explore the demo
           </a>
         </p>

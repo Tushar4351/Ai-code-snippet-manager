@@ -5,6 +5,7 @@ import { connectToDatabase } from "../lib/connectDB";
 import User from "../Models/UserSchema";
 import { handleError } from "../lib/utils";
 
+
 // CREATE
 export async function createUser(user: CreateUserParams) {
   try {
@@ -90,3 +91,4 @@ export async function updateCredits(userId: string, creditFee: number) {
     handleError(error);
   }
 }
+

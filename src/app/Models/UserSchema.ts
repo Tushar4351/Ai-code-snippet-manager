@@ -35,6 +35,10 @@ const UserSchema = new Schema(
       type: Number,
       default: 10,
     },
+    creditAiBalance: {
+      type: Number,
+      default: 5,
+    },
   },
   { timestamps: true }
 );

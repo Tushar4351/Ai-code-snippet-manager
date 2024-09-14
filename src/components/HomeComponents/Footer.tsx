@@ -5,7 +5,7 @@ import YoutubeIcon from "../../assets/icons/youtube.svg";
 
 const Footer = () => {
   return (
-    <footer className="py-5 bg-black text-white/60 border-white/20">
+    <footer className="py-5 bg-black text-white/60 border-white/20" id="contact">
       <div className="container">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
           <div className="text-center">

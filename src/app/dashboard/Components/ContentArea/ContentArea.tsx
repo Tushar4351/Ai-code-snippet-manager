@@ -91,7 +91,8 @@ const NotesArea = () => {
           </>
         )}
       </div>
-      <ContentNote />
+      {sideBarMenu[3].isSelected ? (<></>) : (<>
+        <ContentNote /></>)} 
     </div>
   );
 };
