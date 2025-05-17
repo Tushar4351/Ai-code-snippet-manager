@@ -9,7 +9,7 @@ const Footer = () => {
       <div className="container">
         <div className="flex flex-col gap-4 sm:flex-row sm:justify-between">
           <div className="text-center">
-            @ 2024 Your Company, Inc. All rights reserved
+            @ 2024 Made by, Tushar. All rights reserved
           </div>
           <ul className="flex justify-center gap-2.5">
             <li>
